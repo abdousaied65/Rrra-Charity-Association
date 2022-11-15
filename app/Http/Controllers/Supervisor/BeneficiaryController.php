@@ -1,0 +1,473 @@
+<?php
+
+namespace App\Http\Controllers\Supervisor;
+
+use App\Exports\BeneficiariesExport;
+use App\Exports\BeneficiariesExportByMembershiptype;
+use App\Exports\BeneficiariesExportByQualification;
+use App\Exports\BeneficiariesExportByStatus;
+use App\Exports\RequestsExport;
+use App\Mail\sendingEmail;
+use App\Mail\SystemEmail;
+use App\Models\Beneficiary;
+use App\Http\Controllers\Controller;
+use App\Models\MembershipType;
+use App\Models\Qualification;
+use App\Models\RenewalRequest;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Malath_SMS;
+
+class BeneficiaryController extends Controller
+{
+    public function index(Request $request)
+    {
+        $data = Beneficiary::where('paid','!=','no')->get();
+        $qualifications = Qualification::all();
+        $membership_types = MembershipType::all();
+        return view('supervisor.beneficiaries.index', compact('data', 'qualifications', 'membership_types'));
+    }
+
+    public function create()
+    {
+        $qualifications = Qualification::all();
+        $membership_types = MembershipType::all();
+        return view('supervisor.beneficiaries.create', compact('qualifications', 'membership_types'));
+
+    }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'first_name_ar' => 'required',
+            'second_name_ar' => 'required',
+            'third_name_ar' => 'required',
+            'fourth_name_ar' => 'required',
+            'first_name_en' => 'required',
+            'second_name_en' => 'required',
+            'third_name_en' => 'required',
+            'fourth_name_en' => 'required',
+            'employer' => 'required',
+            'retirement_year' => 'required',
+            'specialization' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|same:confirm-password',
+            'role_name' => 'required',
+            'phone_number' => 'required',
+            'record' => 'required',
+            'qualification_id' => 'required',
+            'membership_type_id' => 'required',
+            'Status' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'date_of_birth' => 'required',
+        ]);
+        $input = $request->all();
+        $input['password'] = Hash::make($input['password']);
+        $beneficiary = Beneficiary::create($input);
+        return redirect()->route('supervisor.beneficiaries.index')
+            ->with('success', 'تم اضافة عضو بنجاح');
+    }
+
+    public function show($id)
+    {
+        $beneficiary = Beneficiary::findorfail($id);
+        return view('supervisor.beneficiaries.show', compact('beneficiary'));
+    }
+
+
+    public function edit($id)
+    {
+        $beneficiary = Beneficiary::findOrFail($id);
+        $qualifications = Qualification::all();
+        $membership_types = MembershipType::all();
+        return view('supervisor.beneficiaries.edit', compact('beneficiary', 'qualifications', 'membership_types'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'first_name_ar' => 'required',
+            'second_name_ar' => 'required',
+            'third_name_ar' => 'required',
+            'fourth_name_ar' => 'required',
+            'first_name_en' => 'required',
+            'second_name_en' => 'required',
+            'third_name_en' => 'required',
+            'fourth_name_en' => 'required',
+            'employer' => 'required',
+            'retirement_year' => 'required',
+            'specialization' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|same:confirm-password',
+            'role_name' => 'required',
+            'phone_number' => 'required',
+            'record' => 'required',
+            'qualification_id' => 'required',
+            'membership_type_id' => 'required',
+            'Status' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'date_of_birth' => 'required',
+        ]);
+        $input = $request->all();
+        if (!empty($input['password'])) {
+            $input['password'] = Hash::make($input['password']);
+        } else {
+            $input = array_except($input, array('password'));
+        }
+        $beneficiary = Beneficiary::findOrFail($id);
+        $beneficiary->update($input);
+        return redirect()->route('supervisor.beneficiaries.index')
+            ->with('success', 'تم تعديل بيانات العضو بنجاح');
+    }
+
+    public function destroy(Request $request)
+    {
+        Beneficiary::findOrFail($request->beneficiary_id)->delete();
+        return redirect()->route('supervisor.beneficiaries.index')
+            ->with('success', 'تم حذف العضو بنجاح');
+    }
+
+    public function remove_selected(Request $request)
+    {
+        $beneficiaries_id = $request->beneficiaries;
+        foreach ($beneficiaries_id as $beneficiary_id) {
+            $beneficiary = Beneficiary::FindOrFail($beneficiary_id);
+            $beneficiary->delete();
+        }
+        return redirect()->route('supervisor.beneficiaries.index')
+            ->with('success', 'تم الحذف بنجاح');
+    }
+
+    public function print_selected()
+    {
+        $beneficiaries = Beneficiary::all();
+        return view('supervisor.beneficiaries.print', compact('beneficiaries'));
+    }
+
+    public function export_beneficiaries_excel()
+    {
+        return Excel::download(new BeneficiariesExport(), 'كل العضويات.xlsx');
+    }
+
+    public function export_beneficiaries_by_qualification_excel(Request $request)
+    {
+        $qualifications = $request->qualifications;
+        $beneficiaries = Beneficiary::whereIn('qualification_id', $qualifications)
+            ->get();
+        if ($beneficiaries->isEmpty()) {
+            return redirect()->route('supervisor.beneficiaries.index')->with('error', 'لا يوجد أعضاء تخص هذه المؤهل ');
+        } else {
+            return Excel::download(new BeneficiariesExportByQualification($qualifications), 'أعضاء حسب المؤهل.xlsx');
+        }
+    }
+
+    public function export_beneficiaries_by_membership_type_excel(Request $request)
+    {
+        $membership_types = $request->membership_types;
+        $beneficiaries = Beneficiary::whereIn('membership_type_id', $membership_types)
+            ->get();
+        if ($beneficiaries->isEmpty()) {
+            return redirect()->route('supervisor.beneficiaries.index')->with('error', 'لا يوجد أعضاء تخص نوع العضوية هذه ');
+        } else {
+            return Excel::download(new BeneficiariesExportBymembershipType($membership_types), 'أعضاء حسب نوع العضوية.xlsx');
+        }
+    }
+
+    public function export_beneficiaries_by_status_excel(Request $request)
+    {
+        $statuses = $request->statuses;
+        $beneficiaries = Beneficiary::whereIn('Status', $statuses)
+            ->get();
+        if ($beneficiaries->isEmpty()) {
+            return redirect()->route('supervisor.beneficiaries.index')->with('error', 'لا يوجد أعضاء تخص هذه الحالات ');
+        } else {
+            return Excel::download(new BeneficiariesExportByStatus($statuses), 'أعضاء حسب الحالة.xlsx');
+        }
+    }
+
+    public function allow($id)
+    {
+        $beneficiary = Beneficiary::FindOrFail($id);
+        $beneficiary->update([
+            'Status' => 'تمت الموافقة'
+        ]);
+        // sending email
+        $email = $beneficiary->email;
+        $subject = "تفعيل حساب عضو";
+        $message = "
+        مرحبا/ (" . $beneficiary->first_name_ar . ")
+        تم تفعيل حسابكم في جمعية المتقاعدين بمنطقة الرياض بنجاح.
+        ";
+        $data = array(
+            'message' => $message,
+            'subject' => $subject,
+            'from_email' => $email
+        );
+        Mail::to($email)->send(new sendingEmail($data));
+        $settings = Setting::First();
+        Mail::to($settings->email)->send(new SystemEmail($data));
+
+        // include(app_path() . '/Functions/sms.class.php');
+        // $DTT_SMS = new Malath_SMS(env('SMS_UserName'), env('SMS_Password'), 'UTF-8');
+        // $Originator = env('SMS_Originator');
+        // $CheckUser = $DTT_SMS->CheckUserPassword();
+        // // data to send SMS
+        // $SmS_Msg = $message;
+        // $Mobiles = $beneficiary->phone_number;
+        // // Code to Send SMS
+        // $Send = $DTT_SMS->Send_SMS($Mobiles, $Originator, $SmS_Msg, $CheckUser);
+
+        return redirect()->route('supervisor.beneficiaries.index')
+            ->with('success', 'تم الموافقة على العضو بنجاح');
+    }
+
+    public function deny($id)
+    {
+        $beneficiary = Beneficiary::FindOrFail($id);
+        $beneficiary->update([
+            'Status' => 'مرفوض'
+        ]);
+        return redirect()->route('supervisor.beneficiaries.index')
+            ->with('success', 'تم رفض العضو بنجاح');
+    }
+
+    public function waiting($id)
+    {
+        $beneficiary = Beneficiary::FindOrFail($id);
+        $beneficiary->update([
+            'Status' => 'قيد المراجعة'
+        ]);
+        return redirect()->route('supervisor.beneficiaries.index')
+            ->with('success', 'تم تعديل الحالة الى قيد المراجعة بنجاح');
+    }
+
+    public function remove_renewal_requests(Request $request)
+    {
+        $requests_id = $request->requests;
+        foreach ($requests_id as $request_id) {
+            $request = RenewalRequest::FindOrFail($request_id);
+            $request->delete();
+        }
+        return redirect()->route('supervisor.renewal.requests')
+            ->with('success', 'تم الحذف بنجاح');
+    }
+
+    public function print_renewal_requests()
+    {
+        $requests = RenewalRequest::all();
+        return view('supervisor.beneficiaries.print_requests', compact('requests'));
+    }
+
+    public function export_requests_excel()
+    {
+        return Excel::download(new RequestsExport(), 'كل طلبات التجديد.xlsx');
+    }
+
+    public function renew_one($id)
+    {
+        $beneficiary = Beneficiary::FindOrFail($id);
+        $start_date = date('Y-m-d');
+        $end_date = date('Y-m-d', strtotime('+1 year'));
+
+        $beneficiary->update([
+            'Status' => 'تمت الموافقة',
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ]);
+        // sending email
+        $email = $beneficiary->email;
+        $subject = "تفعيل حساب عضو";
+        $message = "
+        مرحبا/ (" . $beneficiary->first_name_ar . ")
+        تم تفعيل حسابكم في جمعية المتقاعدين بمنطقة الرياض بنجاح.
+        ";
+        $data = array(
+            'message' => $message,
+            'subject' => $subject,
+            'from_email' => $email
+        );
+        Mail::to($email)->send(new sendingEmail($data));
+        $settings = Setting::First();
+        Mail::to($settings->email)->send(new SystemEmail($data));
+
+        // include(app_path() . '/Functions/sms.class.php');
+        // $DTT_SMS = new Malath_SMS(env('SMS_UserName'), env('SMS_Password'), 'UTF-8');
+        // $Originator = env('SMS_Originator');
+        // $CheckUser = $DTT_SMS->CheckUserPassword();
+        // // data to send SMS
+        // $SmS_Msg = $message;
+        // $Mobiles = $beneficiary->phone_number;
+        // // Code to Send SMS
+        // $Send = $DTT_SMS->Send_SMS($Mobiles, $Originator, $SmS_Msg, $CheckUser);
+
+        return redirect()->route('supervisor.beneficiaries.index')
+            ->with('success', 'تم تجديد العضوية سنة بنجاح');
+    }
+
+    public function renew_two($id)
+    {
+        $beneficiary = Beneficiary::FindOrFail($id);
+        $start_date = date('Y-m-d');
+        $end_date = date('Y-m-d', strtotime('+2 year'));
+
+        $beneficiary->update([
+            'Status' => 'تمت الموافقة',
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ]);
+        // sending email
+        $email = $beneficiary->email;
+        $subject = "تفعيل حساب عضو";
+        $message = "
+        مرحبا/ (" . $beneficiary->first_name_ar . ")
+        تم تفعيل حسابكم في جمعية المتقاعدين بمنطقة الرياض بنجاح.
+        ";
+        $data = array(
+            'message' => $message,
+            'subject' => $subject,
+            'from_email' => $email
+        );
+        Mail::to($email)->send(new sendingEmail($data));
+        $settings = Setting::First();
+        Mail::to($settings->email)->send(new SystemEmail($data));
+
+        // include(app_path() . '/Functions/sms.class.php');
+        // $DTT_SMS = new Malath_SMS(env('SMS_UserName'), env('SMS_Password'), 'UTF-8');
+        // $Originator = env('SMS_Originator');
+        // $CheckUser = $DTT_SMS->CheckUserPassword();
+        // // data to send SMS
+        // $SmS_Msg = $message;
+        // $Mobiles = $beneficiary->phone_number;
+        // // Code to Send SMS
+        // $Send = $DTT_SMS->Send_SMS($Mobiles, $Originator, $SmS_Msg, $CheckUser);
+
+        return redirect()->route('supervisor.beneficiaries.index')
+            ->with('success', 'تم تجديد العضوية سنتين بنجاح');
+    }
+
+    public function renew_three($id)
+    {
+        $beneficiary = Beneficiary::FindOrFail($id);
+        $start_date = date('Y-m-d');
+        $end_date = date('Y-m-d', strtotime('+3 year'));
+
+        $beneficiary->update([
+            'Status' => 'تمت الموافقة',
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ]);
+        // sending email
+        $email = $beneficiary->email;
+        $subject = "تفعيل حساب عضو";
+        $message = "
+        مرحبا/ (" . $beneficiary->first_name_ar . ")
+        تم تفعيل حسابكم في جمعية المتقاعدين بمنطقة الرياض بنجاح.
+        ";
+        $data = array(
+            'message' => $message,
+            'subject' => $subject,
+            'from_email' => $email
+        );
+        Mail::to($email)->send(new sendingEmail($data));
+        $settings = Setting::First();
+        Mail::to($settings->email)->send(new SystemEmail($data));
+
+        // include(app_path() . '/Functions/sms.class.php');
+        // $DTT_SMS = new Malath_SMS(env('SMS_UserName'), env('SMS_Password'), 'UTF-8');
+        // $Originator = env('SMS_Originator');
+        // $CheckUser = $DTT_SMS->CheckUserPassword();
+        // // data to send SMS
+        // $SmS_Msg = $message;
+        // $Mobiles = $beneficiary->phone_number;
+        // // Code to Send SMS
+        // $Send = $DTT_SMS->Send_SMS($Mobiles, $Originator, $SmS_Msg, $CheckUser);
+
+        return redirect()->route('supervisor.beneficiaries.index')
+            ->with('success', 'تم تجديد العضوية 3 سنوات بنجاح');
+    }
+
+    public function renewal_requests()
+    {
+        $requests = RenewalRequest::all();
+        return view('supervisor.beneficiaries.requests', compact('requests'));
+    }
+
+    public function allow_request($id)
+    {
+        $request = RenewalRequest::FindOrFail($id);
+        $period = $request->period;
+        $start_date = date('Y-m-d');
+        $end_date = date('Y-m-d', strtotime('+' . $period . ' year'));
+        $beneficiary = $request->beneficiary;
+        $beneficiary->update([
+            'Status' => 'تمت الموافقة',
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ]);
+        if ($period == 1) {
+            $period_text = "سنة";
+        } elseif ($period == 2) {
+            $period_text = "سنتين";
+        } elseif ($period == 3) {
+            $period_text = "3 سنوات";
+        }
+
+        // sending email
+        $email = $beneficiary->email;
+        $subject = "قبول طلب تجديد عضوية";
+        $message = "
+        مرحبا/ (" . $beneficiary->first_name_ar . ")
+        تم قبول طلب تجديد عضويتك لمدة ( " . $period_text . " ) في جمعية المتقاعدين بمنطقة الرياض بنجاح.
+        ";
+        $data = array(
+            'message' => $message,
+            'subject' => $subject,
+            'from_email' => $email
+        );
+        Mail::to($email)->send(new sendingEmail($data));
+        $settings = Setting::First();
+        Mail::to($settings->email)->send(new SystemEmail($data));
+
+        // include(app_path() . '/Functions/sms.class.php');
+        // $DTT_SMS = new Malath_SMS(env('SMS_UserName'), env('SMS_Password'), 'UTF-8');
+        // $Originator = env('SMS_Originator');
+        // $CheckUser = $DTT_SMS->CheckUserPassword();
+        // // data to send SMS
+        // $SmS_Msg = $message;
+        // $Mobiles = $beneficiary->phone_number;
+        // // Code to Send SMS
+        // $Send = $DTT_SMS->Send_SMS($Mobiles, $Originator, $SmS_Msg, $CheckUser);
+
+
+        $request->update([
+            'status' => 'تمت الموافقة',
+        ]);
+        return redirect()->route('supervisor.renewal.requests')
+            ->with('success', 'تمت الموافقة على الطلب بنجاح');
+    }
+
+    public function deny_request($id)
+    {
+        $request = RenewalRequest::FindOrFail($id);
+        $beneficiary = $request->beneficiary;
+        $request->update([
+            'status' => 'مرفوض',
+        ]);
+        return redirect()->route('supervisor.renewal.requests')
+            ->with('success', 'تم رفض الطلب بنجاح');
+    }
+
+    public function destroy_request(Request $request)
+    {
+        $request = RenewalRequest::FindOrFail($request->request_id);
+        $request->delete();
+        return redirect()->route('supervisor.renewal.requests')
+            ->with('success', 'تم حذف الطلب بنجاح');
+    }
+
+}
