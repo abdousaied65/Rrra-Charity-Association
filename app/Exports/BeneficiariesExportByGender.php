@@ -7,29 +7,28 @@ use App\Models\Qualification;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class BeneficiariesExportByQualification implements FromCollection,WithHeadings
+class BeneficiariesExportByGender implements FromCollection,WithHeadings
 {
-    protected $qualifications;
+    protected $genders;
 
-    public function __construct(array $qualifications)
+    public function __construct(array $genders)
     {
-        $this->qualifications = $qualifications;
+        $this->genders = $genders;
     }
 
     public function array(): array
     {
-        return $this->qualifications;
+        return $this->genders;
     }
 
     public function collection()
     {
-        $beneficiaries = Beneficiary::select('first_name_ar','second_name_ar','third_name_ar','fourth_name_ar',
-            'email','role_name','phone_number','record','gender','Status','membership_type_id','Qualification_id'
-            ,'start_date','end_date','created_at')
-            ->whereIn('Qualification_id',$this->qualifications)->get();
+        $beneficiaries = Beneficiary::select('first_name_ar','second_name_ar','third_name_ar','fourth_name_ar','email','role_name',
+            'phone_number','record','gender','Status','membership_type_id','qualification_id','start_date','end_date','created_at')
+            ->whereIn('gender',$this->genders)->get();
         $beneficiaries->transform(function($i){
             $i->membership_type_id = MembershipType::FindOrFail($i->membership_type_id)->membership_type;
-            $i->Qualification_id = Qualification::FindOrFail($i->Qualification_id)->qualification;
+            $i->qualification_id = Qualification::FindOrFail($i->qualification_id)->qualification;
             if($i->gender == "male"){
                 $i->gender = "ذكر";
             }

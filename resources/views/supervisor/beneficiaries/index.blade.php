@@ -8,7 +8,6 @@
 
     .btn-md {
         height: 40px !important;
-        min-width: 100px !important;
         padding: 10px !important;
         text-align: center !important;
     }
@@ -19,7 +18,7 @@
     }
 
     .bootstrap-select {
-        width: 50% !important;
+        width: 60% !important;
     }
 
     span.badge {
@@ -67,14 +66,14 @@
                         </button>
                     </form>
 
-{{--                    <form method="POST" class="" id="myForm" action="{{route('remove.selected.beneficiaries')}}">--}}
-{{--                        @csrf--}}
-{{--                        @method('POST')--}}
-{{--                        <button type="submit" class="btn btn-md btn-danger m-1 remove_selected">--}}
-{{--                            <i class="fa fa-trash"></i>--}}
-{{--                            حذف--}}
-{{--                        </button>--}}
-{{--                    </form>--}}
+                    {{--                    <form method="POST" class="" id="myForm" action="{{route('remove.selected.beneficiaries')}}">--}}
+                    {{--                        @csrf--}}
+                    {{--                        @method('POST')--}}
+                    {{--                        <button type="submit" class="btn btn-md btn-danger m-1 remove_selected">--}}
+                    {{--                            <i class="fa fa-trash"></i>--}}
+                    {{--                            حذف--}}
+                    {{--                        </button>--}}
+                    {{--                    </form>--}}
 
                     <a href="{{route('supervisor.beneficiaries.create')}}" role="button"
                        class="btn btn-md btn-info m-1">
@@ -89,7 +88,7 @@
                     </a>
                 </div>
                 <div class="row p-4">
-                    <form method="POST" class="col-lg-4 pull-right d-inline"
+                    <form method="POST" class="col-lg-3 pull-right d-inline"
                           action="{{route('export.beneficiaries.by.qualification.excel')}}">
                         @csrf
                         @method('POST')
@@ -97,7 +96,7 @@
                             <label for="qualifications" class="d-block">اختر المؤهلات للتصدير</label>
                             <select required name="qualifications[]" multiple data-live-search="true"
                                     data-style="btn-secondary" data-actions-box="true"
-                                    data-title="اختر المؤهلات" id="qualifications" class="selectpicker show-tick">
+                                    data-title="اختر المؤهلات" id="qualifications" class="w-75 selectpicker show-tick">
                                 @foreach($qualifications as $qualification)
                                     <option value="{{$qualification->id}}">{{$qualification->qualification}}</option>
                                 @endforeach
@@ -106,10 +105,10 @@
                         <button style="font-size: 10px!important;" type="submit"
                                 class="btn btn-md btn-secondary pull-right d-inline">
                             <i class="fa fa-file-excel-o"></i>
-                            تصدير بالمؤهل EXCEL
+                            تصدير
                         </button>
                     </form>
-                    <form method="POST" class="col-lg-4 pull-right d-inline"
+                    <form method="POST" class="col-lg-3 pull-right d-inline"
                           action="{{route('export.beneficiaries.by.membership_type.excel')}}">
                         @csrf
                         @method('POST')
@@ -119,17 +118,18 @@
                                     data-style="btn-danger" data-actions-box="true"
                                     data-title="اختر نوع العضوية" id="membership_types" class="selectpicker show-tick">
                                 @foreach($membership_types as $membership_type)
-                                    <option value="{{$membership_type->id}}">{{$membership_type->membership_type}}</option>
+                                    <option
+                                        value="{{$membership_type->id}}">{{$membership_type->membership_type}}</option>
                                 @endforeach
                             </select>
                         </div>
                         <button style="font-size: 10px!important;" type="submit"
                                 class="btn btn-md btn-danger pull-right d-inline">
                             <i class="fa fa-file-excel-o"></i>
-                            تصدير بنوع العضوية EXCEL
+                            تصدير
                         </button>
                     </form>
-                    <form method="POST" class="col-lg-4 pull-right d-inline"
+                    <form method="POST" class="col-lg-3 pull-right d-inline"
                           action="{{route('export.beneficiaries.by.status.excel')}}">
                         @csrf
                         @method('POST')
@@ -146,7 +146,54 @@
                         <button style="font-size: 10px!important;" type="submit"
                                 class="btn btn-md btn-warning pull-right d-inline">
                             <i class="fa fa-file-excel-o"></i>
-                            تصدير بالحالة EXCEL
+                            تصدير
+                        </button>
+                    </form>
+                    <form method="POST" class="col-lg-3 pull-right d-inline"
+                          action="{{route('export.beneficiaries.by.gender.excel')}}">
+                        @csrf
+                        @method('POST')
+                        <div class="form-group pull-right d-inline">
+                            <label for="genders" class="d-block">اختر الجنس للتصدير</label>
+                            <select required name="genders[]" multiple data-live-search="true"
+                                    data-style="btn-success" data-actions-box="true"
+                                    data-title="اختر الجنس" id="genders" class="selectpicker show-tick">
+                                <option value="male"> ذكر </option>
+                                <option value="female"> أنثى </option>
+                            </select>
+                        </div>
+                        <button style="font-size: 10px!important;" type="submit"
+                                class="btn btn-md btn-success pull-right d-inline">
+                            <i class="fa fa-file-excel-o"></i>
+                            تصدير
+                        </button>
+                    </form>
+                </div>
+                <div class="row p-4">
+                    <form method="POST" class="col-lg-6 pull-right d-inline"
+                          action="{{route('export.beneficiaries.by.oneMonth.excel')}}">
+                        @csrf
+                        @method('POST')
+                        <label for="" class="d-block">
+                            تصدير الاعضاء الباقى على انتهاء عضويتهم شهر فأقل
+                        </label>
+                        <button style="font-size: 12px!important;" type="submit"
+                                class="btn btn-md w-50 btn-block btn-info pull-right d-inline">
+                            <i class="fa fa-file-excel-o"></i>
+                            اضغط هنا للتصدير
+                        </button>
+                    </form>
+                    <form method="POST" class="col-lg-6 pull-right d-inline"
+                          action="{{route('export.beneficiaries.by.end.excel')}}">
+                        @csrf
+                        @method('POST')
+                        <label for="" class="d-block">
+                            تصدير الاعضاء المنتهية اشتراكاتهم
+                        </label>
+                        <button style="font-size: 12px!important;" type="submit"
+                                class="btn btn-md w-50 btn-block btn-primary pull-right d-inline">
+                            <i class="fa fa-file-excel-o"></i>
+                            اضغط هنا للتصدير
                         </button>
                     </form>
                 </div>
@@ -257,15 +304,15 @@
                                                         تعديل
                                                     </a>
                                                 @endcan
-{{--                                                @can('حذف عضو')--}}
-{{--                                                    <a class="dropdown-item delete_beneficiary"--}}
-{{--                                                       beneficiary_id="{{ $beneficiary->id }}"--}}
-{{--                                                       email="{{ $beneficiary->email }}" data-toggle="modal"--}}
-{{--                                                       href="#modaldemo8">--}}
-{{--                                                        <i class="fa fa-trash"></i>--}}
-{{--                                                        حذف--}}
-{{--                                                    </a>--}}
-{{--                                                @endcan--}}
+                                                {{--                                                @can('حذف عضو')--}}
+                                                {{--                                                    <a class="dropdown-item delete_beneficiary"--}}
+                                                {{--                                                       beneficiary_id="{{ $beneficiary->id }}"--}}
+                                                {{--                                                       email="{{ $beneficiary->email }}" data-toggle="modal"--}}
+                                                {{--                                                       href="#modaldemo8">--}}
+                                                {{--                                                        <i class="fa fa-trash"></i>--}}
+                                                {{--                                                        حذف--}}
+                                                {{--                                                    </a>--}}
+                                                {{--                                                @endcan--}}
                                             </div>
                                         </div>
                                     </td>
@@ -293,30 +340,30 @@
         <!--/div-->
 
         <!-- Modal effects -->
-{{--        <div class="modal" id="modaldemo8">--}}
-{{--            <div class="modal-dialog modal-dialog-centered" role="document">--}}
-{{--                <div class="modal-content modal-content-demo">--}}
-{{--                    <div class="modal-header text-center">--}}
-{{--                        <h6 class="modal-title w-100" style="font-family: 'Cairo'; ">حذف عضو</h6>--}}
-{{--                        <button aria-label="Close" class="close"--}}
-{{--                                data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>--}}
-{{--                    </div>--}}
-{{--                    <form action="{{ route('supervisor.beneficiaries.destroy', 'test') }}" method="post">--}}
-{{--                        {{ method_field('delete') }}--}}
-{{--                        {{ csrf_field() }}--}}
-{{--                        <div class="modal-body">--}}
-{{--                            <p>هل انت متأكد انك تريد الحذف ؟</p><br>--}}
-{{--                            <input type="hidden" name="beneficiary_id" id="beneficiary_id" value="">--}}
-{{--                            <input class="form-control" name="email" id="email" type="text" readonly>--}}
-{{--                        </div>--}}
-{{--                        <div class="modal-footer">--}}
-{{--                            <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>--}}
-{{--                            <button type="submit" class="btn btn-danger">حذف</button>--}}
-{{--                        </div>--}}
-{{--                    </form>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
+        {{--        <div class="modal" id="modaldemo8">--}}
+        {{--            <div class="modal-dialog modal-dialog-centered" role="document">--}}
+        {{--                <div class="modal-content modal-content-demo">--}}
+        {{--                    <div class="modal-header text-center">--}}
+        {{--                        <h6 class="modal-title w-100" style="font-family: 'Cairo'; ">حذف عضو</h6>--}}
+        {{--                        <button aria-label="Close" class="close"--}}
+        {{--                                data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>--}}
+        {{--                    </div>--}}
+        {{--                    <form action="{{ route('supervisor.beneficiaries.destroy', 'test') }}" method="post">--}}
+        {{--                        {{ method_field('delete') }}--}}
+        {{--                        {{ csrf_field() }}--}}
+        {{--                        <div class="modal-body">--}}
+        {{--                            <p>هل انت متأكد انك تريد الحذف ؟</p><br>--}}
+        {{--                            <input type="hidden" name="beneficiary_id" id="beneficiary_id" value="">--}}
+        {{--                            <input class="form-control" name="email" id="email" type="text" readonly>--}}
+        {{--                        </div>--}}
+        {{--                        <div class="modal-footer">--}}
+        {{--                            <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>--}}
+        {{--                            <button type="submit" class="btn btn-danger">حذف</button>--}}
+        {{--                        </div>--}}
+        {{--                    </form>--}}
+        {{--                </div>--}}
+        {{--            </div>--}}
+        {{--        </div>--}}
     </div>
 @endsection
 <script src="{{asset('admin-assets/js/jquery.min.js')}}"></script>

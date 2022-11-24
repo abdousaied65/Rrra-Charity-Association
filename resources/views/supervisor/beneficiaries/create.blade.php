@@ -127,7 +127,7 @@
 
                         <div class="row m-t-3 mb-3">
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
-                                <label class="form-label"> جهة العمل </label>
+                                <label class="form-label"> جهة العمل السابقة </label>
                                 <input class="form-control  mg-b-20" style="direction:rtl;"
                                        data-parsley-class-handler="#lnWrapper" name="employer" required=""
                                        type="text">
@@ -151,15 +151,24 @@
                             </div>
 
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
+                                <label> الجنس : <span class="text-danger">*</span></label>
+                                <select required class="js-example-basic-single w-100" name="gender" id="">
+                                    <option value=""> اختر الجنس </option>
+                                    <option value="male">ذكر</option>
+                                    <option value="female">أنثى</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="row m-t-3 mb-3">
+                            <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <label class="form-label"> تاريخ الميلاد </label>
                                 <input class="form-control mg-b-20" style="direction:ltr;"
                                        data-parsley-class-handler="#lnWrapper" name="date_of_birth" required
                                        type="date" value="{{date('Y-m-d')}}">
                             </div>
 
-                        </div>
-
-                        <div class="row m-t-3 mb-3">
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <label class="form-label"> رقم الهوية الوطنية </label>
                                 <input class="form-control  mg-b-20" style="direction:ltr;"
@@ -184,6 +193,8 @@
                                     @endforeach
                                 </select>
                             </div>
+                        </div>
+                        <div class="row mt-3 mb-3">
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <label class="form-label"> الحالة </label>
                                 <select name="Status" required class="form-control">
@@ -193,8 +204,7 @@
                                     <option value="مرفوض"> مرفوض</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="row mt-3 mb-3">
+
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <label class="form-label"> تاريخ العضوية </label>
                                 <input type="date" class="form-control" dir="ltr" name="start_date" value="{{date('Y-m-d')}}" />

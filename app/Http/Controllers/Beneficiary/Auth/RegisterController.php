@@ -37,6 +37,7 @@ class RegisterController extends Controller
             'phone_number' => ['required', 'string', 'max:255', 'unique:beneficiaries', 'regex:/^(009665|9665|\+9665|05|5)(5|0|3|6|4|9|1|8|7)([0-9]{7})$/'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'record' => ['required', 'min:10'],
+            'gender' => ['required', 'string'],
             'first_name_ar' => 'required',
             'second_name_ar' => 'required',
             'third_name_ar' => 'required',
@@ -70,12 +71,10 @@ class RegisterController extends Controller
         // sending email
         $email = $request->email;
         $subject = "تسجيل حساب عضو جديد";
-        $message = '
-        مرحبا/ (' . $request->first_name . ')
-تم تسجيل حسابكم في جمعية المتقاعدين بمنطقة الرياض بنجاح.
-سيتم تفعيل حسابكم قريبآ من قبل الإدارة.
-ستصلكم رسالة على البريد والجوال في حال التفعيل.
-        ';
+$message = 'تم قبول عضويتكم ('.$user->membershipType->membership_type.')
+رقم ('.$user->id.') بجمعية المتقاعدين الأهلية بمنطقة الرياض
+';
+
         $data = array(
             'message' => $message,
             'subject' => $subject,

@@ -72,7 +72,7 @@
                     </ul>
                 </li>
             @endcan
-            @can('اضافة مشرف','عرض مشرف','اضافة صلاحية','عرض صلاحية')
+            @canany(['اضافة مشرف','عرض مشرف','اضافة صلاحية','عرض صلاحية'])
                 <li class="slide">
                     <a class="side-menu__item" data-toggle="slide" href="#">
                         <i class="fa fa-users side-menu__icon"></i>
@@ -136,7 +136,7 @@
                 </li>
             @endcan
 
-            @can('اضافة عضو','عرض عضو')
+            @canany(['اضافة عضو','عرض عضو'])
                 <li class="slide">
                     <a class="side-menu__item" data-toggle="slide" href="#">
                         <i class="fa fa-users side-menu__icon"></i>
@@ -197,7 +197,7 @@
             @endcan
 
 
-            @can('اضافة متطوع','عرض متطوع')
+            @canany(['اضافة متطوع','عرض متطوع'])
                 <li class="slide">
                     <a class="side-menu__item" data-toggle="slide" href="#">
                         <i class="fa fa-users side-menu__icon"></i>
@@ -237,7 +237,7 @@
                     </ul>
                 </li>
             @endcan
-            @can('اضافة طلب','عرض طلب')
+            @canany(['اضافة طلب','عرض طلب'])
                 <li class="slide">
                     <a class="side-menu__item" data-toggle="slide" href="#">
                         <i class="fa fa-paper-plane side-menu__icon"></i>
@@ -278,7 +278,7 @@
                 </li>
             @endcan
 
-            @can('اضافة جنسية','عرض جنسية')
+            @canany(['اضافة جنسية','عرض جنسية'])
 
                 <li class="slide">
                     <a class="side-menu__item" data-toggle="slide" href="#">
@@ -305,7 +305,7 @@
                     </ul>
                 </li>
             @endcan
-            @can('اضافة قائمة بريدية','عرض قائمة بريدية')
+            @canany(['اضافة قائمة بريدية','عرض قائمة بريدية'])
                 <li class="slide">
                     <a class="side-menu__item" data-toggle="slide" href="#">
                         <i class="fa fa-envelope-open side-menu__icon"></i>

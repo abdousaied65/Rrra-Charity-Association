@@ -7,7 +7,7 @@ class RenewalRequest extends Model
 {
     protected $table = 'renewal_requests';
     protected $fillable = [
-        'beneficiary_id','period','amount','membership_type_id','status'
+        'beneficiary_id','start_date','end_date','acceptance_date','period','amount','membership_type_id','status'
     ];
     public function beneficiary(){
         return $this->belongsTo('\App\Models\Beneficiary','beneficiary_id','id');

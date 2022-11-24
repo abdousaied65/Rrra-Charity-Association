@@ -130,7 +130,7 @@
                                         <a href="{{ route('beneficiary.download.pdf') }}"
                                            onclick="event.preventDefault();document.getElementById('print-form').submit();">
                                             <i class="fa fa-print"></i>
-                                            تحميل بطاقة عضو
+                                            الحصول على بطاقة عضو
                                         </a>
                                         <form target="_blank" id="print-form"
                                               action="{{ route('beneficiary.download.pdf') }}" method="get"
@@ -194,7 +194,7 @@
                                                     <div class="row p-4" dir="rtl">
                                                         <div class="mt-2 mb-2 col-lg-6">
                                                             <label class="d-block">الاسم
-                                                                <sup>*</sup></label>
+                                                                <span class="text-danger">*</span></label>
                                                             <input class="brd-rd3 text-right form-control"
                                                                    type="text" readonly
                                                                    value="{{$beneficiary->first_name_ar." ".$beneficiary->second_name_ar." ".$beneficiary->third_name_ar." ".$beneficiary->fourth_name_ar}}"
@@ -203,7 +203,7 @@
                                                         </div>
                                                         <div class="mt-2 mb-2 col-lg-6">
                                                             <label>البريد الالكترونى
-                                                                <sup>*</sup></label>
+                                                                <span class="text-danger">*</span></label>
                                                             <input class="brd-rd3 text-left  form-control"
                                                                    type="email" name="email"
                                                                    value="{{$beneficiary->email}}"
@@ -212,7 +212,8 @@
                                                         </div>
                                                         <div class="clearfix"></div>
                                                         <div class="mt-2 mb-2 col-lg-6 pull-right">
-                                                            <label> رقم الجوال <sup>*</sup></label>
+                                                            <label> رقم الجوال <span
+                                                                    class="text-danger">*</span></label>
                                                             <input class="brd-rd3 text-left  form-control"
                                                                    type="number" min="1" required
                                                                    dir="ltr" name="phone_number"
@@ -220,7 +221,8 @@
                                                                    placeholder="اكتب رقم الجوال">
                                                         </div>
                                                         <div class="mt-2 mb-2 col-lg-6 pull-right">
-                                                            <label> كلمة المرور <sup>*</sup></label>
+                                                            <label> كلمة المرور <span
+                                                                    class="text-danger">*</span></label>
                                                             <input class="brd-rd3 text-left  form-control"
                                                                    type="password" required
                                                                    dir="ltr" name="password"
@@ -229,11 +231,30 @@
                                                         <div class="clearfix"></div>
 
                                                         <div class="mt-2 mb-2 col-lg-6 pull-right">
-                                                            <label> تأكيد كلمة المرور <sup>*</sup></label>
+                                                            <label> تأكيد كلمة المرور <span class="text-danger">*</span></label>
                                                             <input class="brd-rd3 text-left  form-control"
                                                                    type="password" required
                                                                    dir="ltr" name="confirm-password"
                                                                    placeholder="أكد كلمة المرور">
+                                                        </div>
+                                                        <div class="mt-2 mb-2 col-lg-6 pull-right">
+                                                            <label> الجنس : <span class="text-danger">*</span></label>
+                                                            <select required class="js-example-basic-single w-100"
+                                                                    name="gender" id="">
+                                                                <option value=""> اختر الجنس</option>
+                                                                <option
+                                                                    @if($beneficiary->gender == "male")
+                                                                    selected
+                                                                    @endif
+                                                                    value="male">ذكر
+                                                                </option>
+                                                                <option
+                                                                    @if($beneficiary->gender == "female")
+                                                                    selected
+                                                                    @endif
+                                                                    value="female">أنثى
+                                                                </option>
+                                                            </select>
                                                         </div>
                                                         <div class="clearfix"></div>
 
@@ -307,7 +328,8 @@
 
                         <div class="form-group">
                             <label class="d-block" for=""> المبلغ </label>
-                            <input type="number" value="{{$beneficiary->membershipType->price}}" name="amount" required id="amount" dir="ltr" class="form-control"
+                            <input type="number" value="{{$beneficiary->membershipType->price}}" name="amount" required
+                                   id="amount" dir="ltr" class="form-control"
                                    readonly/>
                         </div>
                     </form>
@@ -335,7 +357,7 @@
                 "_token": "{{csrf_token()}}",
                 beneficiary_id: beneficiary_id,
                 period: period,
-                membership_type_id:membership_type_id,
+                membership_type_id: membership_type_id,
             }, function (data) {
                 let amount = data.amount;
                 $('#amount').val(amount);

@@ -134,7 +134,7 @@
                                         <a href="{{ route('beneficiary.download.pdf') }}"
                                            onclick="event.preventDefault();document.getElementById('print-form').submit();">
                                             <i class="fa fa-print"></i>
-                                            تحميل بطاقة عضو
+                                            الحصول على بطاقة عضو
                                         </a>
                                         <form target="_blank" id="print-form"
                                               action="{{ route('beneficiary.download.pdf') }}" method="get"

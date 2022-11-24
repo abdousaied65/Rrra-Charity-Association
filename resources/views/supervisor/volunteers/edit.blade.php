@@ -92,11 +92,11 @@
                                 <option @if(isset($volunteer) && $volunteer->Status == "قيد المراجعة") selected
                                         @endif value="قيد المراجعة">قيد المراجعة
                                 </option>
-                                <option @if(isset($volunteer) && $volunteer->Status == "سارى") selected
-                                        @endif value="سارى">سارى
+                                <option @if(isset($volunteer) && $volunteer->Status == "تمت الموافقة") selected
+                                        @endif value="تمت الموافقة">تمت الموافقة
                                 </option>
-                                <option @if(isset($volunteer) && $volunteer->Status == "منتهى") selected
-                                        @endif value="منتهى">منتهى
+                                <option @if(isset($volunteer) && $volunteer->Status == "مرفوض") selected
+                                        @endif value="مرفوض">مرفوض
                                 </option>
                             </select>
                         </div>

@@ -103,8 +103,8 @@
                             <tr>
                                 <th>#</th>
                                 <th class="text-center">اسم الصلاحية</th>
-                                <th class="text-center">عرض</th>
                                 <th class="text-center">اضافة</th>
+                                <th class="text-center">عرض</th>
                                 <th class="text-center">تعديل</th>
                                 <th class="text-center">حذف</th>
                             </tr>

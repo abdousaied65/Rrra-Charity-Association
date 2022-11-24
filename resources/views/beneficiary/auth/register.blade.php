@@ -135,15 +135,15 @@
                                 </div>
                             </div>
                             <div class="row mt-3 mb-3">
-                                <div class="parsley-input col-md-4 mg-t-20 mg-md-t-0" id="lnWrapper">
+                                <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                     <label> البريد الالكترونى : <span class="text-danger">*</span></label>
                                     <input class="form-control  mg-b-20" style="direction:ltr;" value="{{old('email')}}"
                                            data-parsley-class-handler="#lnWrapper" name="email" required=""
                                            type="email">
                                 </div>
-                                <div class="parsley-input col-md-4 mg-t-20 mg-md-t-0" id="lnWrapper">
+                                <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                     <label class="d-block mb-1"> رقم الجوال
-                                        <span class="text-danger">( رقم الجوال لابد ان يكون 9665xxxxxx ) </span>
+                                        <span class="text-danger">( لابد ان يكون 9665xxxxxx ) </span>
                                     </label>
                                     <input value="{{old('phone_number')}}" class="form-control  mg-b-20"
                                            style="text-align: left;direction:ltr;"
@@ -151,15 +151,23 @@
                                            name="phone_number" required=""
                                            type="number" min="1">
                                 </div>
-                                <div class="parsley-input col-md-4 mg-t-20 mg-md-t-0" id="lnWrapper">
+                                <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                     <label class="d-block mb-1"> رقم الهوية الوطنية
-                                        <span class="text-danger">( رقم الهوية الوطنية لابد ان يكون 10 خانات ) </span>
+                                        <span class="text-danger">(لابد ان يكون 10 خانات ) </span>
                                     </label>
                                     <input value="{{old('record')}}" class="form-control  mg-b-20"
                                            style="text-align: left;direction:ltr;"
                                            maxlength="10" oninput="this.value=this.value.slice(0,this.maxLength)"
                                            name="record" required=""
                                            type="number" min="1">
+                                </div>
+                                <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
+                                    <label> الجنس : <span class="text-danger">*</span></label>
+                                    <select required class="js-example-basic-single w-100" name="gender" id="">
+                                        <option value=""> اختر الجنس </option>
+                                        <option value="male">ذكر</option>
+                                        <option value="female">أنثى</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -196,7 +204,7 @@
                                 </div>
 
                                 <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
-                                    <label class="form-label"> جهة العمل </label>
+                                    <label class="form-label"> جهة العمل السابقة </label>
                                     <input class="form-control  mg-b-20" style="direction:rtl;"
                                            value="{{old('employer')}}"
                                            data-parsley-class-handler="#lnWrapper" name="employer" required=""

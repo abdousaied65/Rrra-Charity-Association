@@ -232,6 +232,15 @@ Route::group(
     Route::post('/export-beneficiaries-by-status-excel', 'BeneficiaryController@export_beneficiaries_by_status_excel')
         ->name('export.beneficiaries.by.status.excel');
 
+    Route::post('/export-beneficiaries-by-gender-excel', 'BeneficiaryController@export_beneficiaries_by_gender_excel')
+        ->name('export.beneficiaries.by.gender.excel');
+
+    Route::post('/export-beneficiaries-by-oneMonth-excel', 'BeneficiaryController@export_beneficiaries_by_oneMonth_excel')
+        ->name('export.beneficiaries.by.oneMonth.excel');
+
+    Route::post('/export-beneficiaries-by-end-excel', 'BeneficiaryController@export_beneficiaries_by_end_excel')
+        ->name('export.beneficiaries.by.end.excel');
+
     Route::get('/allow-beneficiary/{id?}','BeneficiaryController@allow')->name('supervisor.beneficiaries.allow');
     Route::get('/deny-beneficiary/{id?}','BeneficiaryController@deny')->name('supervisor.beneficiaries.deny');
     Route::get('/waiting-beneficiary/{id?}','BeneficiaryController@waiting')->name('supervisor.beneficiaries.waiting');

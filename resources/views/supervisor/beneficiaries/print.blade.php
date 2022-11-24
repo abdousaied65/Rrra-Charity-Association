@@ -28,7 +28,7 @@
         }
 
         .table-container {
-            width: 70%;
+            width: 80%;
             margin: 10px auto;
         }
 
@@ -83,6 +83,7 @@
                     <th class="border-bottom-0 text-center"> رقم الهوية الوطنية</th>
                     <th class="border-bottom-0 text-center"> نوع العضوية</th>
                     <th class="border-bottom-0 text-center"> المؤهل</th>
+                    <th class="border-bottom-0 text-center"> الجنس</th>
                     <th class="border-bottom-0 text-center"> تاريخ العضوية</th>
                     <th class="border-bottom-0 text-center"> تاريخ الانتهاء</th>
                     <th class="border-bottom-0 text-center"> الحالة</th>
@@ -101,6 +102,13 @@
                         <td>{{ $beneficiary->record }}</td>
                         <td>{{ $beneficiary->membershipType->membership_type }}</td>
                         <td>{{ $beneficiary->qualification->qualification }}</td>
+                        <td>
+                            @if($beneficiary->gender == "male")
+                                ذكر
+                            @else
+                                أنثى
+                            @endif
+                        </td>
                         <td>{{ $beneficiary->start_date }}</td>
                         <td>{{ $beneficiary->end_date }}</td>
                         <td>{{ $beneficiary->Status }}</td>

@@ -126,6 +126,7 @@ class HomeController extends Controller
             'email' => ['required', 'email'],
             'phone_number' => ['required', 'string', 'max:255', 'regex:/^(009665|9665|\+9665|05|5)(5|0|3|6|4|9|1|8|7)([0-9]{7})$/'],
             'password' => ['required', 'string', 'min:8', 'same:confirm-password'],
+            'gender' => ['required','string'],
         ]);
 
         $input = $request->all();
@@ -146,11 +147,15 @@ class HomeController extends Controller
         $period = $request->period;
         $membership_type_id = $request->membership_type_id;
         $amount = $request->amount;
+        $start_date = date('Y-m-d');
+        $end_date = date('Y-m-d', strtotime($start_date.'+'.$period.' year'));
         $renewal_request = RenewalRequest::create([
             'beneficiary_id' => $beneficiary->id,
             'period' => $period,
             'membership_type_id' => $membership_type_id,
             'amount' => $amount,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
             'status' => 'قيد المراجعة',
         ]);
         if ($period == 1) {

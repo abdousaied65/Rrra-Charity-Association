@@ -7,29 +7,17 @@ use App\Models\Qualification;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class BeneficiariesExportByQualification implements FromCollection,WithHeadings
+class BeneficiariesExportByOneMonth implements FromCollection,WithHeadings
 {
-    protected $qualifications;
-
-    public function __construct(array $qualifications)
-    {
-        $this->qualifications = $qualifications;
-    }
-
-    public function array(): array
-    {
-        return $this->qualifications;
-    }
-
     public function collection()
     {
-        $beneficiaries = Beneficiary::select('first_name_ar','second_name_ar','third_name_ar','fourth_name_ar',
-            'email','role_name','phone_number','record','gender','Status','membership_type_id','Qualification_id'
-            ,'start_date','end_date','created_at')
-            ->whereIn('Qualification_id',$this->qualifications)->get();
-        $beneficiaries->transform(function($i){
+        $today = date('Y-m-d');
+        $Beneficiaries = Beneficiary::select('first_name_ar','second_name_ar','third_name_ar','fourth_name_ar','email','role_name',
+            'phone_number','record','gender','Status','membership_type_id','qualification_id','start_date','end_date','created_at')
+            ->whereBetween('end_date', [$today, date('Y-m-d', strtotime($today . '+1 month'))])->get();
+        $Beneficiaries->transform(function($i){
             $i->membership_type_id = MembershipType::FindOrFail($i->membership_type_id)->membership_type;
-            $i->Qualification_id = Qualification::FindOrFail($i->Qualification_id)->qualification;
+            $i->qualification_id = Qualification::FindOrFail($i->qualification_id)->qualification;
             if($i->gender == "male"){
                 $i->gender = "ذكر";
             }
@@ -38,7 +26,7 @@ class BeneficiariesExportByQualification implements FromCollection,WithHeadings
             }
             return $i;
         });
-        return $beneficiaries;
+        return $Beneficiaries;
     }
     public function headings(): array
     {

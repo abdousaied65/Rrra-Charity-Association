@@ -82,7 +82,10 @@
                     <th class="border-bottom-0 text-center">مدة التجديد</th>
                     <th class="border-bottom-0 text-center"> المبلغ </th>
                     <th class="border-bottom-0 text-center"> نوع العضوية </th>
-                    <th class="border-bottom-0 text-center">حالة الطلب</th>
+                    <th class="border-bottom-0 text-center">  الحالة </th>
+                    <th class="border-bottom-0 text-center">  بداية الاشتراك </th>
+                    <th class="border-bottom-0 text-center">  تاريخ الانتهاء </th>
+                    <th class="border-bottom-0 text-center"> تاريخ القبول </th>
                     <th class="border-bottom-0 text-center">تاريخ الطلب</th>
                 </tr>
                 </thead>
@@ -109,6 +112,9 @@
                         <td>
                             {{$request->status}}
                         </td>
+                        <td>{{$request->start_date}}</td>
+                        <td>{{$request->end_date}}</td>
+                        <td>{{$request->acceptance_date}}</td>
                         <td>
                             {{date('Y-m-d',strtotime($request->created_at))}}
                         </td>

@@ -195,7 +195,7 @@ class VolunteerController extends Controller
         $start_date = date('Y-m-d');
         $end_date = date('Y-m-d', strtotime('+1 year'));
         $volunteer->update([
-            'Status' => 'سارى',
+            'Status' => 'تمت الموافقة',
             'start_date' => $start_date,
             'end_date' => $end_date,
         ]);
@@ -214,7 +214,7 @@ class VolunteerController extends Controller
         Mail::to($email)->send(new sendingEmail($data));
         $settings = Setting::First();
         Mail::to($settings->email)->send(new SystemEmail($data));
-        
+
         // include(app_path() . '/Functions/sms.class.php');
         // $DTT_SMS = new Malath_SMS(env('SMS_UserName'), env('SMS_Password'), 'UTF-8');
         // $Originator = env('SMS_Originator');
@@ -227,17 +227,17 @@ class VolunteerController extends Controller
 
 
         return redirect()->route('supervisor.volunteers.index')
-            ->with('success', 'تم تعديل الحالة الى سارى بنجاح');
+            ->with('success', 'تم تعديل الحالة الى تمت الموافقة بنجاح');
     }
 
     public function deny($id)
     {
         $volunteer = Volunteer::FindOrFail($id);
         $volunteer->update([
-            'Status' => 'منتهى'
+            'Status' => 'مرفوض'
         ]);
         return redirect()->route('supervisor.volunteers.index')
-            ->with('success', 'تم تعديل الحالة الى منتهى بنجاح');
+            ->with('success', 'تم تعديل الحالة الى مرفوض بنجاح');
     }
 
     public function waiting($id)

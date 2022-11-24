@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Supervisor;
 
 use App\Exports\BeneficiariesExport;
+use App\Exports\BeneficiariesExportByEnd;
+use App\Exports\BeneficiariesExportByGender;
 use App\Exports\BeneficiariesExportByMembershiptype;
+use App\Exports\BeneficiariesExportByOneMonth;
 use App\Exports\BeneficiariesExportByQualification;
 use App\Exports\BeneficiariesExportByStatus;
 use App\Exports\RequestsExport;
@@ -58,6 +61,7 @@ class BeneficiaryController extends Controller
             'role_name' => 'required',
             'phone_number' => 'required',
             'record' => 'required',
+            'gender' => 'required',
             'qualification_id' => 'required',
             'membership_type_id' => 'required',
             'Status' => 'required',
@@ -106,6 +110,7 @@ class BeneficiaryController extends Controller
             'role_name' => 'required',
             'phone_number' => 'required',
             'record' => 'required',
+            'gender' => 'required',
             'qualification_id' => 'required',
             'membership_type_id' => 'required',
             'Status' => 'required',
@@ -190,6 +195,42 @@ class BeneficiaryController extends Controller
         }
     }
 
+    public function export_beneficiaries_by_gender_excel(Request $request)
+    {
+        $genders = $request->genders;
+        $beneficiaries = Beneficiary::whereIn('gender', $genders)
+            ->get();
+        if ($beneficiaries->isEmpty()) {
+            return redirect()->route('supervisor.beneficiaries.index')->with('error', 'لا يوجد أعضاء تخص هذا الجنس ');
+        } else {
+            return Excel::download(new BeneficiariesExportByGender($genders), 'أعضاء حسب الجنس.xlsx');
+        }
+    }
+
+    public function export_beneficiaries_by_oneMonth_excel(Request $request)
+    {
+        $today = date('Y-m-d');
+        $beneficiaries = Beneficiary::whereBetween('end_date', [$today, date('Y-m-d', strtotime($today . '+1 month'))])
+            ->get();
+        if ($beneficiaries->isEmpty()) {
+            return redirect()->route('supervisor.beneficiaries.index')->with('error', 'لا يوجد أعضاء ينتهى اشتراكهم فى تلك الفترة ');
+        } else {
+            return Excel::download(new BeneficiariesExportByOneMonth(), 'أعضاء ينتهى اشتراكهم فى خلال شهر من اليوم.xlsx');
+        }
+    }
+
+    public function export_beneficiaries_by_end_excel(Request $request)
+    {
+        $today = date('Y-m-d');
+        $beneficiaries = Beneficiary::whereDate('end_date', '<', $today)
+            ->get();
+        if ($beneficiaries->isEmpty()) {
+            return redirect()->route('supervisor.beneficiaries.index')->with('error', 'لا يوجد أعضاء اشتراكاتهم منتهية');
+        } else {
+            return Excel::download(new BeneficiariesExportByEnd(), 'أعضاء اشتراكاتهم منتهية.xlsx');
+        }
+    }
+
     public function allow($id)
     {
         $beneficiary = Beneficiary::FindOrFail($id);
@@ -199,10 +240,9 @@ class BeneficiaryController extends Controller
         // sending email
         $email = $beneficiary->email;
         $subject = "تفعيل حساب عضو";
-        $message = "
-        مرحبا/ (" . $beneficiary->first_name_ar . ")
-        تم تفعيل حسابكم في جمعية المتقاعدين بمنطقة الرياض بنجاح.
-        ";
+$message = 'تم قبول عضويتكم ('.$user->membershipType->membership_type.')
+رقم ('.$user->id.') بجمعية المتقاعدين الأهلية بمنطقة الرياض
+';
         $data = array(
             'message' => $message,
             'subject' => $subject,
@@ -282,10 +322,11 @@ class BeneficiaryController extends Controller
         // sending email
         $email = $beneficiary->email;
         $subject = "تفعيل حساب عضو";
-        $message = "
-        مرحبا/ (" . $beneficiary->first_name_ar . ")
-        تم تفعيل حسابكم في جمعية المتقاعدين بمنطقة الرياض بنجاح.
-        ";
+        $message = 'تم تجديد عضويتكم ('.$user->membershipType->membership_type.')
+رقم ('.$user->id.')
+لمدة (سنة) بجمعية المتقاعدين الأهلية بمنطقة الرياض
+';
+
         $data = array(
             'message' => $message,
             'subject' => $subject,
@@ -323,10 +364,10 @@ class BeneficiaryController extends Controller
         // sending email
         $email = $beneficiary->email;
         $subject = "تفعيل حساب عضو";
-        $message = "
-        مرحبا/ (" . $beneficiary->first_name_ar . ")
-        تم تفعيل حسابكم في جمعية المتقاعدين بمنطقة الرياض بنجاح.
-        ";
+        $message = 'تم تجديد عضويتكم ('.$user->membershipType->membership_type.')
+رقم ('.$user->id.')
+لمدة (سنتين) بجمعية المتقاعدين الأهلية بمنطقة الرياض
+';
         $data = array(
             'message' => $message,
             'subject' => $subject,
@@ -364,10 +405,10 @@ class BeneficiaryController extends Controller
         // sending email
         $email = $beneficiary->email;
         $subject = "تفعيل حساب عضو";
-        $message = "
-        مرحبا/ (" . $beneficiary->first_name_ar . ")
-        تم تفعيل حسابكم في جمعية المتقاعدين بمنطقة الرياض بنجاح.
-        ";
+        $message = 'تم تجديد عضويتكم ('.$user->membershipType->membership_type.')
+رقم ('.$user->id.')
+لمدة (3 سنوات) بجمعية المتقاعدين الأهلية بمنطقة الرياض
+';
         $data = array(
             'message' => $message,
             'subject' => $subject,
@@ -420,10 +461,12 @@ class BeneficiaryController extends Controller
         // sending email
         $email = $beneficiary->email;
         $subject = "قبول طلب تجديد عضوية";
-        $message = "
-        مرحبا/ (" . $beneficiary->first_name_ar . ")
-        تم قبول طلب تجديد عضويتك لمدة ( " . $period_text . " ) في جمعية المتقاعدين بمنطقة الرياض بنجاح.
-        ";
+
+        $message = 'تم تجديد عضويتكم ('.$user->membershipType->membership_type.')
+رقم ('.$user->id.')
+لمدة ('.$period_text.') بجمعية المتقاعدين الأهلية بمنطقة الرياض
+';
+
         $data = array(
             'message' => $message,
             'subject' => $subject,
@@ -446,6 +489,9 @@ class BeneficiaryController extends Controller
 
         $request->update([
             'status' => 'تمت الموافقة',
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'acceptance_date' => $start_date
         ]);
         return redirect()->route('supervisor.renewal.requests')
             ->with('success', 'تمت الموافقة على الطلب بنجاح');

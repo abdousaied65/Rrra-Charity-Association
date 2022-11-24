@@ -80,7 +80,10 @@
                                 <th class="border-bottom-0 text-center">مدة التجديد</th>
                                 <th class="border-bottom-0 text-center"> المبلغ </th>
                                 <th class="border-bottom-0 text-center"> نوع العضوية </th>
-                                <th class="border-bottom-0 text-center">حالة الطلب</th>
+                                <th class="border-bottom-0 text-center">  الحالة </th>
+                                <th class="border-bottom-0 text-center">  بداية الاشتراك </th>
+                                <th class="border-bottom-0 text-center">  تاريخ الانتهاء </th>
+                                <th class="border-bottom-0 text-center"> تاريخ القبول </th>
                                 <th class="border-bottom-0 text-center">تاريخ الطلب</th>
                                 <th style="width: 5%!important;" class="border-bottom-0 text-center">تحكم</th>
                             </tr>
@@ -125,6 +128,9 @@
                                             </span>
                                         @endif
                                     </td>
+                                    <td>{{$request->start_date}}</td>
+                                    <td>{{$request->end_date}}</td>
+                                    <td>{{$request->acceptance_date}}</td>
                                     <td>
                                         {{date('Y-m-d',strtotime($request->created_at))}}
                                     </td>
@@ -161,6 +167,9 @@
                             @endforeach
                             <tfoot>
                             <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -244,7 +253,7 @@
 
         $('#example-table').DataTable({
             "columnDefs": [
-                {"orderable": false, "targets": [8]}
+                {"orderable": false, "targets": [11]}
             ],
             "order": [[1, "desc"]],
             initComplete: function () {

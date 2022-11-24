@@ -62,21 +62,23 @@
                             تصدير الكل EXCEL
                         </button>
                     </form>
-
-                    <form method="POST" class="" id="myForm" action="{{route('remove.selected.volunteers')}}">
-                        @csrf
-                        @method('POST')
-                        <button type="submit" class="btn btn-md btn-danger m-1 remove_selected">
-                            <i class="fa fa-trash"></i>
-                            حذف
-                        </button>
-                    </form>
-
-                    <a href="{{route('supervisor.volunteers.create')}}" role="button"
-                       class="btn btn-md btn-info m-1">
-                        <i class="fa fa-plus"></i>
-                        اضافة
-                    </a>
+                    @can('حذف متطوع')
+                        <form method="POST" class="" id="myForm" action="{{route('remove.selected.volunteers')}}">
+                            @csrf
+                            @method('POST')
+                            <button type="submit" class="btn btn-md btn-danger m-1 remove_selected">
+                                <i class="fa fa-trash"></i>
+                                حذف
+                            </button>
+                        </form>
+                    @endcan
+                    @can('اضافة متطوع')
+                        <a href="{{route('supervisor.volunteers.create')}}" role="button"
+                           class="btn btn-md btn-info m-1">
+                            <i class="fa fa-plus"></i>
+                            اضافة
+                        </a>
+                    @endcan
                 </div>
 
                 <div class="row p-3">
@@ -110,8 +112,8 @@
                                     data-style="btn-warning" data-actions-box="true"
                                     data-title="اختر الحالات" id="statuses" class="selectpicker show-tick">
                                 <option value="قيد المراجعة">قيد المراجعة</option>
-                                <option value="سارى">سارى</option>
-                                <option value="منتهى">منتهى</option>
+                                <option value="تمت الموافقة">تمت الموافقة</option>
+                                <option value="مرفوض">مرفوض</option>
                             </select>
                         </div>
                         <button style="font-size: 10px!important;" type="submit"
@@ -136,7 +138,7 @@
                                 <th class="border-bottom-0 text-center"> رقم الهوية الوطنية</th>
                                 <th class="border-bottom-0 text-center">رقم الجوال</th>
                                 <th class="border-bottom-0 text-center"> مجال التطوع</th>
-                                <th class="border-bottom-0 text-center"> حالة الاشتراك</th>
+                                <th class="border-bottom-0 text-center"> الحالة</th>
                                 <th style="width: 5%!important;" class="border-bottom-0 text-center">تحكم</th>
                             </tr>
                             </thead>
@@ -162,13 +164,13 @@
                                             <span class="badge badge-warning">
                                                 قيد المراجعة
                                             </span>
-                                        @elseif($volunteer->Status == "سارى")
+                                        @elseif($volunteer->Status == "تمت الموافقة")
                                             <span class="badge badge-success">
-                                                سارى
+                                                تمت الموافقة
                                             </span>
-                                        @elseif($volunteer->Status == "منتهى")
+                                        @elseif($volunteer->Status == "مرفوض")
                                             <span class="badge badge-danger">
-                                                منتهى
+                                                مرفوض
                                             </span>
                                         @endif
                                     </td>
@@ -181,13 +183,13 @@
                                             </button>
                                             <div class="dropdown-menu">
                                                 @can('عرض متطوع')
-
                                                     <a href="{{ route('supervisor.volunteers.show', $volunteer->id) }}"
                                                        class="dropdown-item">
                                                         <i class="fa fa-eye"></i>
                                                         عرض
                                                     </a>
-
+                                                @endcan
+                                                @can('تعديل متطوع')
                                                     <a href="{{ route('supervisor.volunteers.allow', $volunteer->id) }}"
                                                        class="dropdown-item text-success">
                                                         <i class="fa fa-check"></i>
@@ -197,7 +199,7 @@
                                                     <a href="{{ route('supervisor.volunteers.deny', $volunteer->id) }}"
                                                        class="dropdown-item text-danger">
                                                         <i class="fa fa-times"></i>
-                                                        منتهى
+                                                        مرفوض
                                                     </a>
 
                                                     <a href="{{ route('supervisor.volunteers.waiting', $volunteer->id) }}"
@@ -206,8 +208,6 @@
                                                         قيد المراجعة
                                                     </a>
 
-                                                @endcan
-                                                @can('تعديل متطوع')
                                                     <a href="{{ route('supervisor.volunteers.edit', $volunteer->id) }}"
                                                        class="dropdown-item">
                                                         <i class="fa fa-edit"></i>
@@ -307,7 +307,7 @@
         $('#example-table tfoot tr th:nth-child(4)').html('<input class="form-control" type="text" placeholder="رقم الهوية الوطنية" />');
         $('#example-table tfoot tr th:nth-child(5)').html('<input class="form-control" type="text" placeholder="رقم الجوال" />');
         $('#example-table tfoot tr th:nth-child(6)').html('<select name="field_id" required class="form-control"><option value="">اختر مجال التطوع</option>@foreach($fields as $field)<option value="{{$field->field}}">{{$field->field}}</option>@endforeach</select>');
-        $('#example-table tfoot tr th:nth-child(7)').html('<select name="Status" required class="form-control"><option value="">اختر الحالة </option><option value="سارى"> سارى </option><option value="منتهى"> منتهى </option><option value="قيد المراجعة"> قيد المراجعة </option></select>');
+        $('#example-table tfoot tr th:nth-child(7)').html('<select name="Status" required class="form-control"><option value="">اختر الحالة </option><option value="تمت الموافقة"> تمت الموافقة </option><option value="مرفوض"> مرفوض </option><option value="قيد المراجعة"> قيد المراجعة </option></select>');
 
         $('#example-table').DataTable({
             "columnDefs": [

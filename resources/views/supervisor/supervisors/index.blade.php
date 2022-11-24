@@ -53,19 +53,23 @@
                         </button>
                     </form>
 
-                    <form method="POST" class="" id="myForm" action="{{route('remove.selected.supervisors')}}">
-                        @csrf
-                        @method('POST')
-                        <button type="submit" class="btn btn-md btn-danger m-1 remove_selected">
-                            <i class="fa fa-trash"></i>
-                            حذف
-                        </button>
-                    </form>
-
-                    <a href="{{route('supervisor.supervisors.create')}}" role="button" class="btn btn-md btn-info m-1">
-                        <i class="fa fa-plus"></i>
-                        اضافة
-                    </a>
+                    @can('حذف مشرف')
+                        <form method="POST" class="" id="myForm" action="{{route('remove.selected.supervisors')}}">
+                            @csrf
+                            @method('POST')
+                            <button type="submit" class="btn btn-md btn-danger m-1 remove_selected">
+                                <i class="fa fa-trash"></i>
+                                حذف
+                            </button>
+                        </form>
+                    @endcan
+                    @can('اضافة مشرف')
+                        <a href="{{route('supervisor.supervisors.create')}}" role="button"
+                           class="btn btn-md btn-info m-1">
+                            <i class="fa fa-plus"></i>
+                            اضافة
+                        </a>
+                    @endcan
                 </div>
                 <div class="card-body p-1 m-1">
                     <div class="table-responsive hoverable-table">

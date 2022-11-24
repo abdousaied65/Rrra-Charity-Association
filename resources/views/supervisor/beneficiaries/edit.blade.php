@@ -132,7 +132,7 @@
 
                         <div class="row m-t-3 mb-3">
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
-                                <label class="form-label"> جهة العمل </label>
+                                <label class="form-label"> جهة العمل السابقة </label>
                                 <input class="form-control  mg-b-20" style="direction:rtl;"
                                        value="{{$beneficiary->employer}}"
                                        data-parsley-class-handler="#lnWrapper" name="employer" required=""
@@ -159,6 +159,27 @@
                                        data-parsley-class-handler="#lnWrapper" name="specialization" required=""
                                        type="text" value="{{$beneficiary->specialization}}">
                             </div>
+                            <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
+                                <label> الجنس : <span class="text-danger">*</span></label>
+                                <select required class="js-example-basic-single w-100" name="gender" id="">
+                                    <option value=""> اختر الجنس</option>
+                                    <option
+                                        @if($beneficiary->gender == "male")
+                                        selected
+                                        @endif
+                                        value="male">ذكر
+                                    </option>
+                                    <option
+                                        @if($beneficiary->gender == "female")
+                                        selected
+                                        @endif
+                                        value="female">أنثى</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="row m-t-3 mb-3">
 
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <label class="form-label"> تاريخ الميلاد </label>
@@ -166,10 +187,6 @@
                                        data-parsley-class-handler="#lnWrapper" name="date_of_birth" required
                                        type="date" value="{{$beneficiary->date_of_birth}}">
                             </div>
-
-                        </div>
-
-                        <div class="row m-t-3 mb-3">
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <label class="form-label"> رقم الهوية الوطنية </label>
                                 <input class="form-control  mg-b-20" style="direction:ltr;"
@@ -200,31 +217,39 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                        </div>
+                        <div class="row mt-3 mb-3">
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <label class="form-label"> الحالة </label>
                                 <select name="Status" required class="form-control">
                                     <option value="">اختر الحالة</option>
-                                    <option @if($beneficiary->Status == "قيد المراجعة") selected @endif value="قيد المراجعة"> قيد المراجعة</option>
-                                    <option @if($beneficiary->Status == "تمت الموافقة") selected @endif value="تمت الموافقة"> تمت الموافقة</option>
-                                    <option @if($beneficiary->Status == "مرفوض") selected @endif value="مرفوض"> مرفوض</option>
+                                    <option @if($beneficiary->Status == "قيد المراجعة") selected
+                                            @endif value="قيد المراجعة"> قيد المراجعة
+                                    </option>
+                                    <option @if($beneficiary->Status == "تمت الموافقة") selected
+                                            @endif value="تمت الموافقة"> تمت الموافقة
+                                    </option>
+                                    <option @if($beneficiary->Status == "مرفوض") selected @endif value="مرفوض"> مرفوض
+                                    </option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="row mt-3 mb-3">
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <label class="form-label"> تاريخ العضوية </label>
-                                <input type="date" class="form-control" dir="ltr" name="start_date" value="{{$beneficiary->start_date}}" />
+                                <input type="date" class="form-control" dir="ltr" name="start_date"
+                                       value="{{$beneficiary->start_date}}"/>
                             </div>
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <label class="form-label"> تاريخ الانتهاء </label>
-                                <input type="date" class="form-control" dir="ltr" name="end_date" value="{{$beneficiary->end_date}}" />
+                                <input type="date" class="form-control" dir="ltr" name="end_date"
+                                       value="{{$beneficiary->end_date}}"/>
                             </div>
                             <div class="parsley-input col-md-3 mg-t-20 mg-md-t-0" id="lnWrapper">
                                 <label class="form-label"> هل تم سداد مبلغ الاشتراك </label>
                                 <select name="paid" required class="form-control">
                                     <option value="">اختر الحالة</option>
-                                    <option @if($beneficiary->paid == "yes") selected @endif value="yes"> نعم </option>
-                                    <option @if($beneficiary->paid == "no") selected @endif value="no"> لا </option>
+                                    <option @if($beneficiary->paid == "yes") selected @endif value="yes"> نعم</option>
+                                    <option @if($beneficiary->paid == "no") selected @endif value="no"> لا</option>
                                 </select>
                             </div>
                         </div>

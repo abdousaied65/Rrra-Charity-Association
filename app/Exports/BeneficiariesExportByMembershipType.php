@@ -25,12 +25,18 @@ class BeneficiariesExportByMembershipType implements FromCollection, WithHeading
     public function collection()
     {
         $beneficiaries = Beneficiary::select('first_name_ar','second_name_ar','third_name_ar','fourth_name_ar',
-            'email', 'role_name', 'phone_number', 'record', 'Status', 'membership_type_id', 'qualification_id',
+            'email', 'role_name', 'phone_number', 'record','gender', 'Status', 'membership_type_id', 'qualification_id',
             'start_date','end_date','created_at')
             ->whereIn('membership_type_id', $this->membership_types)->get();
         $beneficiaries->transform(function ($i) {
             $i->membership_type_id = MembershipType::FindOrFail($i->membership_type_id)->membership_type;
             $i->qualification_id = Qualification::FindOrFail($i->qualification_id)->qualification;
+            if($i->gender == "male"){
+                $i->gender = "ذكر";
+            }
+            else{
+                $i->gender = "انثى";
+            }
             return $i;
         });
         return $beneficiaries;
@@ -47,6 +53,7 @@ class BeneficiariesExportByMembershipType implements FromCollection, WithHeading
             'الصلاحية',
             'رقم الجوال',
             'الهوية الوطنية',
+            'الجنس',
             'الحالة',
             'نوع العضوية',
             'المؤهل',

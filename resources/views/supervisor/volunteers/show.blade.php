@@ -38,19 +38,21 @@
     <div class="row mt-3 mb-3">
         <div class="col-lg-12 text-center justify-content-center">
             @can('عرض متطوع')
-                @if($volunteer->Status != "سارى")
+                @if($volunteer->Status != "تمت الموافقة")
                     <a href="{{ route('supervisor.volunteers.allow', $volunteer->id) }}"
                        class="btn btn-md btn-success">
                         <i class="fa fa-check"></i>
                         تفعيل
                     </a>
                 @endif
+            @endcan
+            @can('تعديل متطوع')
 
-                @if($volunteer->Status != "منتهى")
+                @if($volunteer->Status != "مرفوض")
                     <a href="{{ route('supervisor.volunteers.deny', $volunteer->id) }}"
                        class="btn btn-md btn-danger">
                         <i class="fa fa-times"></i>
-                        منتهى
+                        مرفوض
                     </a>
                 @endif
 
@@ -61,8 +63,7 @@
                         قيد المراجعة
                     </a>
                 @endif
-            @endcan
-            @can('تعديل متطوع')
+
                 <a href="{{ route('supervisor.volunteers.edit', $volunteer->id) }}"
                    class="btn btn-md btn-info">
                     <i class="fa fa-edit"></i>

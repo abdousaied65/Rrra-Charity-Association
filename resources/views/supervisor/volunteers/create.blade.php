@@ -86,8 +86,8 @@
                                 <select name="Status" required class="form-control">
                                     <option value="">اختر الحالة</option>
                                     <option value="قيد المراجعة">قيد المراجعة</option>
-                                    <option value="سارى">سارى</option>
-                                    <option value="منتهى">منتهى</option>
+                                    <option value="تمت الموافقة">تمت الموافقة</option>
+                                    <option value="مرفوض">مرفوض</option>
                                 </select>
                             </div>
                         </div>
