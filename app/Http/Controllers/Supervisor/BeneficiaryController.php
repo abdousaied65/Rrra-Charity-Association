@@ -28,7 +28,7 @@ class BeneficiaryController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Beneficiary::where('paid','!=','no')->get();
+        $data = Beneficiary::where('paid', '!=', 'no')->get();
         $qualifications = Qualification::all();
         $membership_types = MembershipType::all();
         return view('supervisor.beneficiaries.index', compact('data', 'qualifications', 'membership_types'));
@@ -240,8 +240,8 @@ class BeneficiaryController extends Controller
         // sending email
         $email = $beneficiary->email;
         $subject = "تفعيل حساب عضو";
-$message = 'تم قبول عضويتكم ('.$user->membershipType->membership_type.')
-رقم ('.$user->id.') بجمعية المتقاعدين الأهلية بمنطقة الرياض
+        $message = 'تم قبول عضويتكم (' . $beneficiary->membershipType->membership_type . ')
+رقم (' . $beneficiary->id . ') بجمعية المتقاعدين الأهلية بمنطقة الرياض
 ';
         $data = array(
             'message' => $message,
@@ -322,8 +322,8 @@ $message = 'تم قبول عضويتكم ('.$user->membershipType->membership_ty
         // sending email
         $email = $beneficiary->email;
         $subject = "تفعيل حساب عضو";
-        $message = 'تم تجديد عضويتكم ('.$user->membershipType->membership_type.')
-رقم ('.$user->id.')
+        $message = 'تم تجديد عضويتكم (' . $beneficiary->membershipType->membership_type . ')
+رقم (' . $beneficiary->id . ')
 لمدة (سنة) بجمعية المتقاعدين الأهلية بمنطقة الرياض
 ';
 
@@ -364,8 +364,8 @@ $message = 'تم قبول عضويتكم ('.$user->membershipType->membership_ty
         // sending email
         $email = $beneficiary->email;
         $subject = "تفعيل حساب عضو";
-        $message = 'تم تجديد عضويتكم ('.$user->membershipType->membership_type.')
-رقم ('.$user->id.')
+        $message = 'تم تجديد عضويتكم (' . $beneficiary->membershipType->membership_type . ')
+رقم (' . $beneficiary->id . ')
 لمدة (سنتين) بجمعية المتقاعدين الأهلية بمنطقة الرياض
 ';
         $data = array(
@@ -405,8 +405,8 @@ $message = 'تم قبول عضويتكم ('.$user->membershipType->membership_ty
         // sending email
         $email = $beneficiary->email;
         $subject = "تفعيل حساب عضو";
-        $message = 'تم تجديد عضويتكم ('.$user->membershipType->membership_type.')
-رقم ('.$user->id.')
+        $message = 'تم تجديد عضويتكم (' . $beneficiary->membershipType->membership_type . ')
+رقم (' . $beneficiary->id . ')
 لمدة (3 سنوات) بجمعية المتقاعدين الأهلية بمنطقة الرياض
 ';
         $data = array(
@@ -462,9 +462,9 @@ $message = 'تم قبول عضويتكم ('.$user->membershipType->membership_ty
         $email = $beneficiary->email;
         $subject = "قبول طلب تجديد عضوية";
 
-        $message = 'تم تجديد عضويتكم ('.$user->membershipType->membership_type.')
-رقم ('.$user->id.')
-لمدة ('.$period_text.') بجمعية المتقاعدين الأهلية بمنطقة الرياض
+        $message = 'تم تجديد عضويتكم (' . $beneficiary->membershipType->membership_type . ')
+رقم (' . $beneficiary->id . ')
+لمدة (' . $period_text . ') بجمعية المتقاعدين الأهلية بمنطقة الرياض
 ';
 
         $data = array(
@@ -485,7 +485,6 @@ $message = 'تم قبول عضويتكم ('.$user->membershipType->membership_ty
         // $Mobiles = $beneficiary->phone_number;
         // // Code to Send SMS
         // $Send = $DTT_SMS->Send_SMS($Mobiles, $Originator, $SmS_Msg, $CheckUser);
-
 
         $request->update([
             'status' => 'تمت الموافقة',
@@ -515,5 +514,109 @@ $message = 'تم قبول عضويتكم ('.$user->membershipType->membership_ty
         return redirect()->route('supervisor.renewal.requests')
             ->with('success', 'تم حذف الطلب بنجاح');
     }
+
+    public function beneficiaries_emails()
+    {
+        $membership_types = MembershipType::all();
+        return view('supervisor.beneficiaries.mail', compact('membership_types'));
+    }
+
+    public function beneficiaries_emails_post(Request $request)
+    {
+        $membership_type_id = $request->membership_type_id;
+        $beneficiaries = Beneficiary::where('membership_type_id', $membership_type_id)->get();
+        $message = nl2br($request->message);
+        $subject = $request->subject;
+        $emails = array();
+        foreach ($beneficiaries as $beneficiary) {
+            array_push($emails, $beneficiary->email);
+        }
+        $data = array(
+            'emails' => $emails,
+            'message' => $message,
+            'subject' => $subject,
+        );
+        foreach ($emails as $email) {
+            Mail::to($email)->send(new sendingEmail($data));
+        }
+
+        return redirect()->route('beneficiaries.emails')
+            ->with('success', 'تم ارسال الرسالة بنجاح');
+    }
+
+    public function beneficiaries_expired_email()
+    {
+        $today = date('Y-m-d');
+        $beneficiaries = Beneficiary::whereDate('end_date', '<', $today)
+            ->get();
+        return view('supervisor.beneficiaries.expired_email', compact('beneficiaries'));
+    }
+
+    public function beneficiaries_expired_email_post(Request $request)
+    {
+        $beneficiaries_ids = $request->beneficiaries;
+        $emails = array();
+        foreach ($beneficiaries_ids as $beneficiary_id) {
+            $beneficiary = Beneficiary::FindOrFail($beneficiary_id);
+            array_push($emails, $beneficiary->email);
+        }
+        $message = "
+        السلام عليكم ورحمة الله وبركاته
+        عزيزى عضو جمعية المتقاعدين بمنطقة الرياض
+        نفيدكم علما بانتهاء عضويتكم
+        ونرجو منكم المبادرة بتجديد العضوية فى اقرب وقت ممكن
+        ";
+        $subject = "رسالة تذكير بانتهاء العضوية";
+
+        $data = array(
+            'emails' => $emails,
+            'message' => $message,
+            'subject' => $subject,
+        );
+        foreach ($emails as $email) {
+            Mail::to($email)->send(new sendingEmail($data));
+        }
+
+        return redirect()->route('beneficiaries.expired.email')
+            ->with('success', 'تم ارسال الرسالة بنجاح');
+    }
+
+    public function beneficiaries_about_email()
+    {
+        $today = date('Y-m-d');
+        $beneficiaries = Beneficiary::whereBetween('end_date', [$today, date('Y-m-d', strtotime($today . '+1 month'))])
+            ->get();
+        return view('supervisor.beneficiaries.about_email', compact('beneficiaries'));
+    }
+
+    public function beneficiaries_about_email_post(Request $request)
+    {
+        $beneficiaries_ids = $request->beneficiaries;
+        $emails = array();
+        foreach ($beneficiaries_ids as $beneficiary_id) {
+            $beneficiary = Beneficiary::FindOrFail($beneficiary_id);
+            array_push($emails, $beneficiary->email);
+        }
+        $message = "
+        السلام عليكم ورحمة الله وبركاته
+        عزيزى عضو جمعية المتقاعدين بمنطقة الرياض
+        نفيدكم علما بانتهاء عضويتكم
+        ونرجو منكم المبادرة بتجديد العضوية فى اقرب وقت ممكن
+        ";
+        $subject = "رسالة تذكير بانتهاء العضوية";
+
+        $data = array(
+            'emails' => $emails,
+            'message' => $message,
+            'subject' => $subject,
+        );
+        foreach ($emails as $email) {
+            Mail::to($email)->send(new sendingEmail($data));
+        }
+
+        return redirect()->route('beneficiaries.about.email')
+            ->with('success', 'تم ارسال الرسالة بنجاح');
+    }
+
 
 }

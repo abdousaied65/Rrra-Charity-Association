@@ -164,6 +164,15 @@
                                 </a>
                             </li>
                         @endcan
+
+                        @can('اضافة عضو')
+                            <li>
+                                <a class="slide-item" href="{{ route('beneficiaries.emails') }}">
+                                    ارسال رسالة الى الاعضاء
+                                </a>
+                            </li>
+                        @endcan
+
                         @can('اضافة نوع عضوية')
                             <li>
                                 <a class="slide-item" href="{{ route('supervisor.membership_types.create') }}">
@@ -192,6 +201,20 @@
                                 </a>
                             </li>
                         @endcan
+
+                        @can('اضافة عضو')
+                            <li>
+                                <a class="slide-item" href="{{ route('beneficiaries.expired.email') }}">
+                                    رسالة تذكير للاعضاء المنتهية عضويتهم
+                                </a>
+                            </li>
+                            <li>
+                                <a class="slide-item" href="{{ route('beneficiaries.about.email') }}">
+                                    رسالة تذكير للاعضاء الباقى على انتهاء عضويتهم شهر فأقل
+                                </a>
+                            </li>
+                        @endcan
+
                     </ul>
                 </li>
             @endcan

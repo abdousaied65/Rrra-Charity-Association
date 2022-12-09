@@ -8,6 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @method static whereDate(string $string, string $string1, false|string $today)
+ * @method static whereBetween(string $string, array $array)
+ */
 class Beneficiary extends Authenticatable
 {
     use Notifiable, HasRoles;

@@ -28,7 +28,7 @@ class sendingOrderEmail extends Mailable
      */
     public function build()
     {
-        return $this->from('info@noornajran.sa')->subject($this->data['subject'])
+        return $this->from(env('MAIL_FROM_ADDRESS'))->subject($this->data['subject'])
             ->view('supervisor.emails.order_template')->with('data', $this->data);
     }
 }

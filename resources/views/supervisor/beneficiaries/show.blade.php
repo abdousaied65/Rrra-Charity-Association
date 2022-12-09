@@ -14,6 +14,7 @@
             <table class="table table-striped table-condensed table-bordered text-center">
                 <thead>
                 <tr>
+                    <th class="border-bottom-0 text-center">رقم العضوية</th>
                     <th class="border-bottom-0 text-center">اسم العضو</th>
                     <th class="border-bottom-0 text-center">رقم الجوال</th>
                     <th class="border-bottom-0 text-center"> رقم الهوية الوطنية</th>
@@ -22,12 +23,12 @@
                     <th class="border-bottom-0 text-center"> الجنس</th>
                     <th class="border-bottom-0 text-center"> تاريخ العضوية</th>
                     <th class="border-bottom-0 text-center"> تاريخ الانتهاء</th>
-                    <th class="border-bottom-0 text-center"> الحالة</th>
-                    <th class="border-bottom-0 text-center"> البريد الالكترونى</th>
+
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
+                    <td>{{$beneficiary->id}}</td>
                     <td>{{ $beneficiary->first_name_ar." ".$beneficiary->second_name_ar." ".$beneficiary->third_name_ar." ".$beneficiary->fourth_name_ar }}</td>
                     <td>{{ $beneficiary->phone_number }}</td>
                     <td>{{ $beneficiary->record }}</td>
@@ -42,8 +43,6 @@
                     </td>
                     <td>{{ $beneficiary->start_date }}</td>
                     <td>{{ $beneficiary->end_date }}</td>
-                    <td>{{ $beneficiary->Status }}</td>
-                    <td>{{ $beneficiary->email }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -52,6 +51,8 @@
             <table class="table table-striped table-condensed table-bordered text-center">
                 <thead>
                 <tr>
+                    <th class="border-bottom-0 text-center"> الحالة</th>
+                    <th class="border-bottom-0 text-center"> البريد الالكترونى</th>
                     <th class="border-bottom-0 text-center">التخصص</th>
                     <th class="border-bottom-0 text-center">جهة العمل السابقة</th>
                     <th class="border-bottom-0 text-center"> سنة التقاعد</th>
@@ -60,6 +61,8 @@
                 </thead>
                 <tbody>
                 <tr>
+                    <td>{{ $beneficiary->Status }}</td>
+                    <td>{{ $beneficiary->email }}</td>
                     <td>{{ $beneficiary->specialization }}</td>
                     <td>{{ $beneficiary->employer }}</td>
                     <td>{{ $beneficiary->retirement_year }}</td>
@@ -101,43 +104,52 @@
                     تعديل
                 </a>
             @endcan
-{{--            @can('حذف عضو')--}}
-{{--                <a class="btn btn-md btn-danger delete_beneficiary"--}}
-{{--                   beneficiary_id="{{ $beneficiary->id }}"--}}
-{{--                   email="{{ $beneficiary->email }}" data-toggle="modal"--}}
-{{--                   href="#modaldemo8">--}}
-{{--                    <i class="fa fa-trash"></i>--}}
-{{--                    حذف--}}
-{{--                </a>--}}
-{{--            @endcan--}}
+            <a href="{{route('download.pdf', $beneficiary->id) }}" class="btn btn-md btn-primary">
+                <i class="fa fa-print"></i>
+                تحميل بطاقة العضو
+            </a>
+            <a href="{{route('send.email', $beneficiary->id) }}" class="btn btn-md btn-dark">
+                <i class="fa fa-print"></i>
+                ارسال رسالة الى العضو
+            </a>
+
+            {{--            @can('حذف عضو')--}}
+            {{--                <a class="btn btn-md btn-danger delete_beneficiary"--}}
+            {{--                   beneficiary_id="{{ $beneficiary->id }}"--}}
+            {{--                   email="{{ $beneficiary->email }}" data-toggle="modal"--}}
+            {{--                   href="#modaldemo8">--}}
+            {{--                    <i class="fa fa-trash"></i>--}}
+            {{--                    حذف--}}
+            {{--                </a>--}}
+            {{--            @endcan--}}
         </div>
     </div>
 
     <!-- Modal effects -->
-{{--    <div class="modal" id="modaldemo8">--}}
-{{--        <div class="modal-dialog modal-dialog-centered" role="document">--}}
-{{--            <div class="modal-content modal-content-demo">--}}
-{{--                <div class="modal-header text-center">--}}
-{{--                    <h6 class="modal-title w-100" style="font-family: 'Cairo'; ">حذف عضو</h6>--}}
-{{--                    <button aria-label="Close" class="close"--}}
-{{--                            data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>--}}
-{{--                </div>--}}
-{{--                <form action="{{ route('supervisor.beneficiaries.destroy', 'test') }}" method="post">--}}
-{{--                    {{ method_field('delete') }}--}}
-{{--                    {{ csrf_field() }}--}}
-{{--                    <div class="modal-body">--}}
-{{--                        <p>هل انت متأكد انك تريد الحذف ؟</p><br>--}}
-{{--                        <input type="hidden" name="beneficiary_id" id="beneficiary_id" value="">--}}
-{{--                        <input class="form-control" name="email" id="email" type="text" readonly>--}}
-{{--                    </div>--}}
-{{--                    <div class="modal-footer">--}}
-{{--                        <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>--}}
-{{--                        <button type="submit" class="btn btn-danger">حذف</button>--}}
-{{--                    </div>--}}
-{{--                </form>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
+    {{--    <div class="modal" id="modaldemo8">--}}
+    {{--        <div class="modal-dialog modal-dialog-centered" role="document">--}}
+    {{--            <div class="modal-content modal-content-demo">--}}
+    {{--                <div class="modal-header text-center">--}}
+    {{--                    <h6 class="modal-title w-100" style="font-family: 'Cairo'; ">حذف عضو</h6>--}}
+    {{--                    <button aria-label="Close" class="close"--}}
+    {{--                            data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>--}}
+    {{--                </div>--}}
+    {{--                <form action="{{ route('supervisor.beneficiaries.destroy', 'test') }}" method="post">--}}
+    {{--                    {{ method_field('delete') }}--}}
+    {{--                    {{ csrf_field() }}--}}
+    {{--                    <div class="modal-body">--}}
+    {{--                        <p>هل انت متأكد انك تريد الحذف ؟</p><br>--}}
+    {{--                        <input type="hidden" name="beneficiary_id" id="beneficiary_id" value="">--}}
+    {{--                        <input class="form-control" name="email" id="email" type="text" readonly>--}}
+    {{--                    </div>--}}
+    {{--                    <div class="modal-footer">--}}
+    {{--                        <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>--}}
+    {{--                        <button type="submit" class="btn btn-danger">حذف</button>--}}
+    {{--                    </div>--}}
+    {{--                </form>--}}
+    {{--            </div>--}}
+    {{--        </div>--}}
+    {{--    </div>--}}
 @endsection
 
 <script src="{{asset('admin-assets/js/jquery.min.js')}}"></script>

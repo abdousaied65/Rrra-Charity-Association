@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    $sliders = Slider::all();
-    return view('site.index',compact('sliders'));
+    abort('503');
+    // $sliders = Slider::all();
+    // return view('site.index',compact('sliders'));
 })->name('index');
 
 Route::get('/about', function () {
@@ -17,7 +18,7 @@ Route::get('/about', function () {
 
 Route::get('/services', function () {
     $services = Service::all();
-    return view('site.services',compact('services'));
+    return view('site.services', compact('services'));
 })->name('services');
 
 Route::get('/contact', function () {
@@ -37,7 +38,7 @@ Route::post('/orders-search', 'OrderController@search')->name('orders.search');
 Route::get('/volunteers-create', 'VolunteerController@create')->name('volunteers.create');
 Route::post('/volunteers-store', 'VolunteerController@store')->name('volunteers.store');
 
-Route::get('/donation','PaymentController@donation')->name('donation');
+Route::get('/donation', 'PaymentController@donation')->name('donation');
 
 Route::get('/checkout', [PaymentController::class, 'index'])->name('checkout.index');
 Route::post('/checkout/telr', [PaymentController::class, 'store'])->name('checkout.store');
@@ -47,6 +48,9 @@ Route::get('/handle-payment/cancel', [PaymentController::class, 'cancel']);
 Route::get('/handle-payment/declined', [PaymentController::class, 'declined']);
 
 Route::get('/membership/{id?}', 'QrController@index')->name('membership');
+
+Route::get('/download-pdf/{id?}', 'QrController@DownloadPdf')->name('download.pdf');
+
 
 // *********  Supervisor Routes ******** //
 Route::group(
@@ -68,7 +72,7 @@ Route::group(
     Route::GET('supervisor/password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('supervisor.password.request');
     Route::POST('supervisor/password/reset', 'Auth\ResetPasswordController@reset')->name('supervisor.password.update');
     Route::GET('supervisor/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('supervisor.password.reset');
-    });
+});
 
 Route::group(
     ['middleware' => ['auth:supervisor-web'],
@@ -101,10 +105,9 @@ Route::group(
         'store' => 'supervisor.services.store',
         'show' => 'supervisor.services.show',
     ]);
-    Route::post('/remove-selected-services','ServiceController@remove_selected')->name('remove.selected.services');
-    Route::get('/print-selected-services','ServiceController@print_selected')->name('print.selected.services');
+    Route::post('/remove-selected-services', 'ServiceController@remove_selected')->name('remove.selected.services');
+    Route::get('/print-selected-services', 'ServiceController@print_selected')->name('print.selected.services');
     Route::post('/export-services-excel', 'ServiceController@export_services_excel')->name('export.services.excel');
-
 
 
     // Supervisors Routes
@@ -117,8 +120,8 @@ Route::group(
         'store' => 'supervisor.supervisors.store',
         'show' => 'supervisor.supervisors.show',
     ]);
-    Route::post('/remove-selected-supervisors','SupervisorController@remove_selected')->name('remove.selected.supervisors');
-    Route::get('/print-selected-supervisors','SupervisorController@print_selected')->name('print.selected.supervisors');
+    Route::post('/remove-selected-supervisors', 'SupervisorController@remove_selected')->name('remove.selected.supervisors');
+    Route::get('/print-selected-supervisors', 'SupervisorController@print_selected')->name('print.selected.supervisors');
 
     Route::post('/export-supervisors-excel', 'SupervisorController@export_supervisors_excel')->name('export.supervisors.excel');
 
@@ -146,8 +149,8 @@ Route::group(
         'store' => 'supervisor.nationalities.store',
         'show' => 'supervisor.nationalities.show',
     ]);
-    Route::post('/remove-selected-nationalities','NationalityController@remove_selected')->name('remove.selected.nationalities');
-    Route::get('/print-selected-nationalities','NationalityController@print_selected')->name('print.selected.nationalities');
+    Route::post('/remove-selected-nationalities', 'NationalityController@remove_selected')->name('remove.selected.nationalities');
+    Route::get('/print-selected-nationalities', 'NationalityController@print_selected')->name('print.selected.nationalities');
     Route::post('/export-nationalities-excel', 'NationalityController@export_nationalities_excel')->name('export.nationalities.excel');
 
     // qualifications Routes
@@ -160,8 +163,8 @@ Route::group(
         'store' => 'supervisor.qualifications.store',
         'show' => 'supervisor.qualifications.show',
     ]);
-    Route::post('/remove-selected-qualifications','QualificationController@remove_selected')->name('remove.selected.qualifications');
-    Route::get('/print-selected-qualifications','QualificationController@print_selected')->name('print.selected.qualifications');
+    Route::post('/remove-selected-qualifications', 'QualificationController@remove_selected')->name('remove.selected.qualifications');
+    Route::get('/print-selected-qualifications', 'QualificationController@print_selected')->name('print.selected.qualifications');
     Route::post('/export-qualifications-excel', 'QualificationController@export_qualifications_excel')->name('export.qualifications.excel');
 
     // order_types Routes
@@ -174,8 +177,8 @@ Route::group(
         'store' => 'supervisor.order_types.store',
         'show' => 'supervisor.order_types.show',
     ]);
-    Route::post('/remove-selected-order-types','OrderTypeController@remove_selected')->name('remove.selected.order_types');
-    Route::get('/print-selected-order-types','OrderTypeController@print_selected')->name('print.selected.order_types');
+    Route::post('/remove-selected-order-types', 'OrderTypeController@remove_selected')->name('remove.selected.order_types');
+    Route::get('/print-selected-order-types', 'OrderTypeController@print_selected')->name('print.selected.order_types');
     Route::post('/export-order-types-excel', 'OrderTypeController@export_order_types_excel')->name('export.order_types.excel');
 
     // membership_types Routes
@@ -188,8 +191,8 @@ Route::group(
         'store' => 'supervisor.membership_types.store',
         'show' => 'supervisor.membership_types.show',
     ]);
-    Route::post('/remove-selected-membership-types','MembershipTypeController@remove_selected')->name('remove.selected.membership_types');
-    Route::get('/print-selected-membership-types','MembershipTypeController@print_selected')->name('print.selected.membership_types');
+    Route::post('/remove-selected-membership-types', 'MembershipTypeController@remove_selected')->name('remove.selected.membership_types');
+    Route::get('/print-selected-membership-types', 'MembershipTypeController@print_selected')->name('print.selected.membership_types');
     Route::post('/export-membership-types-excel', 'MembershipTypeController@export_membership_types_excel')->name('export.membership_types.excel');
 
 
@@ -203,8 +206,8 @@ Route::group(
         'store' => 'supervisor.fields.store',
         'show' => 'supervisor.fields.show',
     ]);
-    Route::post('/remove-selected-fields','FieldController@remove_selected')->name('remove.selected.fields');
-    Route::get('/print-selected-fields','FieldController@print_selected')->name('print.selected.fields');
+    Route::post('/remove-selected-fields', 'FieldController@remove_selected')->name('remove.selected.fields');
+    Route::get('/print-selected-fields', 'FieldController@print_selected')->name('print.selected.fields');
     Route::post('/export-fields-excel', 'FieldController@export_fields_excel')->name('export.fields.excel');
 
     // beneficiaries Routes
@@ -218,8 +221,8 @@ Route::group(
         'show' => 'supervisor.beneficiaries.show',
     ]);
 
-    Route::post('/remove-selected-beneficiaries','BeneficiaryController@remove_selected')->name('remove.selected.beneficiaries');
-    Route::get('/print-selected-beneficiaries','BeneficiaryController@print_selected')->name('print.selected.beneficiaries');
+    Route::post('/remove-selected-beneficiaries', 'BeneficiaryController@remove_selected')->name('remove.selected.beneficiaries');
+    Route::get('/print-selected-beneficiaries', 'BeneficiaryController@print_selected')->name('print.selected.beneficiaries');
 
     Route::post('/export-beneficiaries-excel', 'BeneficiaryController@export_beneficiaries_excel')->name('export.beneficiaries.excel');
 
@@ -241,22 +244,38 @@ Route::group(
     Route::post('/export-beneficiaries-by-end-excel', 'BeneficiaryController@export_beneficiaries_by_end_excel')
         ->name('export.beneficiaries.by.end.excel');
 
-    Route::get('/allow-beneficiary/{id?}','BeneficiaryController@allow')->name('supervisor.beneficiaries.allow');
-    Route::get('/deny-beneficiary/{id?}','BeneficiaryController@deny')->name('supervisor.beneficiaries.deny');
-    Route::get('/waiting-beneficiary/{id?}','BeneficiaryController@waiting')->name('supervisor.beneficiaries.waiting');
+    Route::get('/allow-beneficiary/{id?}', 'BeneficiaryController@allow')->name('supervisor.beneficiaries.allow');
+    Route::get('/deny-beneficiary/{id?}', 'BeneficiaryController@deny')->name('supervisor.beneficiaries.deny');
+    Route::get('/waiting-beneficiary/{id?}', 'BeneficiaryController@waiting')->name('supervisor.beneficiaries.waiting');
 
-    Route::get('/renew-one-beneficiary/{id?}','BeneficiaryController@renew_one')->name('supervisor.beneficiaries.renew.one');
-    Route::get('/renew-two-beneficiary/{id?}','BeneficiaryController@renew_two')->name('supervisor.beneficiaries.renew.two');
-    Route::get('/renew-three-beneficiary/{id?}','BeneficiaryController@renew_three')->name('supervisor.beneficiaries.renew.three');
+    Route::get('/renew-one-beneficiary/{id?}', 'BeneficiaryController@renew_one')->name('supervisor.beneficiaries.renew.one');
+    Route::get('/renew-two-beneficiary/{id?}', 'BeneficiaryController@renew_two')->name('supervisor.beneficiaries.renew.two');
+    Route::get('/renew-three-beneficiary/{id?}', 'BeneficiaryController@renew_three')->name('supervisor.beneficiaries.renew.three');
 
-    Route::get('/renewal-requests','BeneficiaryController@renewal_requests')->name('supervisor.renewal.requests');
-    Route::get('/print-renewal-requests','BeneficiaryController@print_renewal_requests')->name('print.renewal.requests');
-    Route::post('/remove-renewal-requests','BeneficiaryController@remove_renewal_requests')->name('remove.renewal.requests');
+    Route::get('/renewal-requests', 'BeneficiaryController@renewal_requests')->name('supervisor.renewal.requests');
+    Route::get('/print-renewal-requests', 'BeneficiaryController@print_renewal_requests')->name('print.renewal.requests');
+    Route::post('/remove-renewal-requests', 'BeneficiaryController@remove_renewal_requests')->name('remove.renewal.requests');
     Route::post('/export-requests-excel', 'BeneficiaryController@export_requests_excel')->name('export.requests.excel');
 
-    Route::get('/allow-request/{id?}','BeneficiaryController@allow_request')->name('supervisor.request.allow');
-    Route::get('/deny-request/{id?}','BeneficiaryController@deny_request')->name('supervisor.request.deny');
-    Route::delete('/destroy-request/','BeneficiaryController@destroy_request')->name('supervisor.request.destroy');
+    Route::get('/allow-request/{id?}', 'BeneficiaryController@allow_request')->name('supervisor.request.allow');
+    Route::get('/deny-request/{id?}', 'BeneficiaryController@deny_request')->name('supervisor.request.deny');
+    Route::delete('/destroy-request/', 'BeneficiaryController@destroy_request')->name('supervisor.request.destroy');
+
+    Route::get('/beneficiaries-emails/', 'BeneficiaryController@beneficiaries_emails')
+        ->name('beneficiaries.emails');
+    Route::post('/beneficiaries-emails-post/', 'BeneficiaryController@beneficiaries_emails_post')
+        ->name('beneficiaries.emails.post');
+
+
+    Route::get('/beneficiaries-expired-email/', 'BeneficiaryController@beneficiaries_expired_email')
+        ->name('beneficiaries.expired.email');
+    Route::post('/beneficiaries-expired-email-post/', 'BeneficiaryController@beneficiaries_expired_email_post')
+        ->name('beneficiaries.expired.email.post');
+
+    Route::get('/beneficiaries-about-email/', 'BeneficiaryController@beneficiaries_about_email')
+        ->name('beneficiaries.about.email');
+    Route::post('/beneficiaries-about-email-post/', 'BeneficiaryController@beneficiaries_about_email_post')
+        ->name('beneficiaries.about.email.post');
 
 
     // orders Routes
@@ -270,8 +289,8 @@ Route::group(
         'show' => 'supervisor.orders.show',
     ]);
 
-    Route::post('/remove-selected-orders','OrderController@remove_selected')->name('remove.selected.orders');
-    Route::get('/print-selected-orders','OrderController@print_selected')->name('print.selected.orders');
+    Route::post('/remove-selected-orders', 'OrderController@remove_selected')->name('remove.selected.orders');
+    Route::get('/print-selected-orders', 'OrderController@print_selected')->name('print.selected.orders');
     Route::post('/export-orders-excel', 'OrderController@export_orders_excel')->name('export.orders.excel');
 
     Route::post('/export-orders-by-nationality-excel', 'OrderController@export_orders_by_nationality_excel')
@@ -283,9 +302,9 @@ Route::group(
     Route::post('/export-orders-by-ordertype-excel', 'OrderController@export_orders_by_order_type_excel')
         ->name('export.orders.by.order_type.excel');
 
-    Route::get('/allow-order/{id?}','OrderController@allow')->name('supervisor.orders.allow');
-    Route::get('/deny-order/{id?}','OrderController@deny')->name('supervisor.orders.deny');
-    Route::get('/waiting-order/{id?}','OrderController@waiting')->name('supervisor.orders.waiting');
+    Route::get('/allow-order/{id?}', 'OrderController@allow')->name('supervisor.orders.allow');
+    Route::get('/deny-order/{id?}', 'OrderController@deny')->name('supervisor.orders.deny');
+    Route::get('/waiting-order/{id?}', 'OrderController@waiting')->name('supervisor.orders.waiting');
 
     // volunteers Routes
     Route::resource('volunteers', 'VolunteerController')->names([
@@ -298,8 +317,8 @@ Route::group(
         'show' => 'supervisor.volunteers.show',
     ]);
 
-    Route::post('/remove-selected-volunteers','VolunteerController@remove_selected')->name('remove.selected.volunteers');
-    Route::get('/print-selected-volunteers','VolunteerController@print_selected')->name('print.selected.volunteers');
+    Route::post('/remove-selected-volunteers', 'VolunteerController@remove_selected')->name('remove.selected.volunteers');
+    Route::get('/print-selected-volunteers', 'VolunteerController@print_selected')->name('print.selected.volunteers');
     Route::post('/export-volunteers-excel', 'VolunteerController@export_volunteers_excel')->name('export.volunteers.excel');
     Route::post('/export-volunteers-by-field-excel', 'VolunteerController@export_volunteers_by_field_excel')
         ->name('export.volunteers.by.field.excel');
@@ -309,9 +328,9 @@ Route::group(
     Route::post('/export-volunteers-by-end-excel', 'VolunteerController@export_volunteers_by_end_excel')
         ->name('export.volunteers.by.end.excel');
 
-    Route::get('/allow-volunteer/{id?}','VolunteerController@allow')->name('supervisor.volunteers.allow');
-    Route::get('/deny-volunteer/{id?}','VolunteerController@deny')->name('supervisor.volunteers.deny');
-    Route::get('/waiting-volunteer/{id?}','VolunteerController@waiting')->name('supervisor.volunteers.waiting');
+    Route::get('/allow-volunteer/{id?}', 'VolunteerController@allow')->name('supervisor.volunteers.allow');
+    Route::get('/deny-volunteer/{id?}', 'VolunteerController@deny')->name('supervisor.volunteers.deny');
+    Route::get('/waiting-volunteer/{id?}', 'VolunteerController@waiting')->name('supervisor.volunteers.waiting');
 
 
     // Contacts Routes
@@ -336,7 +355,7 @@ Route::group(
         'update' => 'supervisor.slider.update',
         'store' => 'supervisor.slider.store',
     ]);
-    Route::post('/remove-selected-slider','SliderController@remove_selected')->name('remove.selected.slider');
+    Route::post('/remove-selected-slider', 'SliderController@remove_selected')->name('remove.selected.slider');
 
     // maillists Routes
     Route::resource('maillists', 'MailListController')->names([
@@ -348,13 +367,16 @@ Route::group(
         'store' => 'supervisor.maillists.store',
         'show' => 'supervisor.maillists.show',
     ]);
-    Route::post('/remove-selected-maillists','MailListController@remove_selected')->name('remove.selected.maillists');
-    Route::get('/print-selected-maillists','MailListController@print_selected')->name('print.selected.maillists');
+    Route::post('/remove-selected-maillists', 'MailListController@remove_selected')->name('remove.selected.maillists');
+    Route::get('/print-selected-maillists', 'MailListController@print_selected')->name('print.selected.maillists');
 
     Route::post('/export-maillists-excel', 'MailListController@export_maillists_excel')->name('export.maillists.excel');
 
-    Route::get('/maillists-mail','MailListController@maillist_mail')->name('maillists.mail');
-    Route::post('/maillists-send','MailListController@maillist_send')->name('maillists.send');
+    Route::get('/maillists-mail', 'MailListController@maillist_mail')->name('maillists.mail');
+    Route::post('/maillists-send', 'MailListController@maillist_send')->name('maillists.send');
+
+    Route::get('/send-email/{id?}', 'HomeController@send_email')->name('send.email');
+
 
 });
 // *********  User Routes ******** //
@@ -390,13 +412,13 @@ Route::group(
     ], function () {
     Route::get('/', 'HomeController@index')->name('beneficiary.home');
     Route::get('/home', 'HomeController@index')->name('beneficiary.home');
-    Route::get('/download-pdf','HomeController@DownloadPdf')->name('beneficiary.download.pdf');
+    Route::get('/download-pdf', 'HomeController@DownloadPdf')->name('beneficiary.download.pdf');
 
-    Route::post('/get-amount-total','HomeController@get_amount_total')->name('get.amount.total');
+    Route::post('/get-amount-total', 'HomeController@get_amount_total')->name('get.amount.total');
 
-    Route::post('/renewal-request','HomeController@renewal_request')->name('renewal.request');
-    Route::get('/renewal-requests','HomeController@renewal_requests')->name('renewal.requests');
-    Route::get('/membership-details','HomeController@membership_details')->name('membership.details');
+    Route::post('/renewal-request', 'HomeController@renewal_request')->name('renewal.request');
+    Route::get('/renewal-requests', 'HomeController@renewal_requests')->name('renewal.requests');
+    Route::get('/membership-details', 'HomeController@membership_details')->name('membership.details');
 
     // SupervisorProfile Routes
     Route::get('profile/edit/{id}', 'HomeController@edit_profile')->name('beneficiary.profile.edit');
